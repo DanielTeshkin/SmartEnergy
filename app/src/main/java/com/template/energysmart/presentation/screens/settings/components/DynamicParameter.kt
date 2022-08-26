@@ -1,0 +1,560 @@
+package com.template.energysmart.presentation.screens.settings.components
+import android.annotation.SuppressLint
+import android.widget.SeekBar
+import android.widget.Switch
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
+
+
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.versionedparcelable.ParcelField
+import com.smarttoolfactory.slider.ColorfulSlider
+import com.smarttoolfactory.slider.MaterialSliderColors
+import com.smarttoolfactory.slider.MaterialSliderDefaults
+import com.smarttoolfactory.slider.SliderBrushColor
+import com.template.energysmart.R
+import com.template.energysmart.presentation.screens.settings.ParameterType
+import com.template.energysmart.presentation.screens.settings.ParameterValueType
+import com.template.energysmart.presentation.screens.settings.SettingsViewEvent
+import com.template.energysmart.presentation.screens.settings.SettingsViewModel
+import com.template.energysmart.presentation.theme.DarkGrayColor
+import com.template.energysmart.presentation.theme.Gray
+import com.template.energysmart.presentation.theme.Green
+import com.template.energysmart.presentation.theme.MainGrayColor
+import kotlin.math.absoluteValue
+
+@Composable
+
+fun SliderParameter(
+    range: IntRange,
+    title:String,
+    prefix: String,
+    mean:Int,
+    viewModel: SettingsViewModel,
+    parameterValueType: ParameterValueType,
+    TitleDraw:@Composable (String)->Unit,
+
+){
+
+    Column(
+        Modifier
+
+            .background(MainGrayColor)
+            .padding(top = 13.dp)
+            .width(331.dp)) {
+       TitleDraw(title)
+       Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
+           .width(240.dp)
+           .padding(top = 20.dp), verticalAlignment = Alignment.Bottom) {
+           TextRange(range = range, prefix =prefix )
+
+       }
+
+        Row() {
+            Box(Modifier.width(240 .dp)) {
+                ColorfulSlider(
+                    value = sliderState(range,mean.toString()),
+                    thumbRadius = 15.dp,
+                    trackHeight = 20.dp,
+                    onValueChange = { it ->
+                       viewModel.handleEvent(SettingsViewEvent.ValueChangerEvent(up(range,it),parameterValueType))
+                    },
+                    colors = MaterialSliderDefaults.materialColors(
+                        inactiveTrackColor = SliderBrushColor(color = DarkGrayColor),
+                        activeTrackColor = SliderBrushColor(Green),
+                        thumbColor = SliderBrushColor(Color.White),
+                        disabledActiveTrackColor = SliderBrushColor(color = DarkGrayColor)
+                    ),
+                    valueRange = 0f..1f
+                    )
+            }
+
+                val focusManager = LocalFocusManager.current
+                TextField(
+                    value = mean.toString(),
+                    onValueChange = {
+                        if(it.isNotEmpty()) {
+                            viewModel.handleEvent(SettingsViewEvent.ValueChangerEvent(it,parameterValueType))
+                        }
+                    },
+                     modifier= Modifier
+                         .offset(x = 26.dp, y = (-5).dp)
+                         .width(65.dp)
+                         ,
+                    textStyle = TextStyle(
+                        textAlign = TextAlign.Center,
+                        fontSize =12.sp,
+                        textDecoration = TextDecoration.None,
+                        lineHeight = 5.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        fontStyle = FontStyle.Normal,
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType= KeyboardType.Number),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.White,
+                        focusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+
+                    )
+
+                )
+
+
+
+
+
+        }
+
+       Divider()
+
+    } }
+
+
+@Composable
+
+fun Test(){
+    SliderParameter(range = 0..600, title = "Время до запуска", prefix ="c" ,123,viewModel= hiltViewModel(),ParameterValueType.TIME_STOP){
+            TitleSliderMedium(text = it)
+    }
+}
+
+@Composable
+@Preview
+fun PanelPhaseControl(enabled:Boolean=false){
+    Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()){
+        Text(
+            text = "Контроль по фазе",
+            textAlign = TextAlign.Start,
+            fontSize = 16.sp,
+            textDecoration = TextDecoration.None,
+            letterSpacing = 0.4444443881511688.sp,
+            lineHeight = 26.sp,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+
+                .width(148.dp)
+                .width(30.dp)
+
+                //.height(26.dp)
+
+                .alpha(0.699999988079071f),
+            color = Color(red = 0.2252604216337204f, green = 0.2252604216337204f, blue = 0.2252604216337204f, alpha = 1f),
+            fontWeight = FontWeight.Normal,
+            fontStyle = FontStyle.Normal,
+        )
+        if(enabled)   Text(
+            text = "(Неактивно)",
+            textAlign = TextAlign.Start,
+            fontSize = 16.sp,
+            textDecoration = TextDecoration.None,
+            letterSpacing = 0.4444443881511688.sp,
+            lineHeight = 26.sp,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+
+                .width(98.dp)
+
+                //.height(26.dp)
+
+                .alpha(0.699999988079071f),
+            color = Color(red = 0.2252604216337204f, green = 0.2252604216337204f, blue = 0.2252604216337204f, alpha = 1f),
+            fontWeight = FontWeight.Normal,
+            fontStyle = FontStyle.Normal,
+        )
+        else
+            Box(Modifier.offset(y= (-10).dp)) {
+                PanelPhase()
+            }
+
+
+    }
+}
+@Composable
+fun PanelPhase(){
+    var checked_first by remember{ mutableStateOf(true)}
+    var image_first by remember {
+        mutableStateOf(R.drawable.round_green)
+    }
+    var checked_second by remember{ mutableStateOf(false)}
+    var image_second by remember {
+        mutableStateOf(R.drawable.ic_group_16)
+    }
+    var checked_third by remember{ mutableStateOf(false)}
+    var image_third by remember {
+        mutableStateOf(R.drawable.ic_group_16)
+    }
+    Row {
+        IconToggleButton(checked = checked_first, onCheckedChange ={
+            checked_first=it
+            if(it){
+                image_first=R.drawable.round_green
+                image_third=R.drawable.ic_group_16
+                image_second=R.drawable.ic_group_16
+                checked_second=false
+                checked_third=false
+            }
+            else image_first=R.drawable.ic_group_16
+
+        } ) {
+                 Box{
+                     Image(imageVector = ImageVector.vectorResource(id = image_first), contentDescription ="" )
+                      Box(Modifier.align(Alignment.Center)) {
+                          TextPhase(number = "1")
+                      }
+                 }
+        }
+        IconToggleButton(checked = checked_second, onCheckedChange ={
+            checked_second=it
+            if(it) {
+                image_second=R.drawable.round_green
+                image_first=R.drawable.ic_group_16
+                image_third=R.drawable.ic_group_16
+                checked_first=false
+                checked_third=false
+
+            }
+            else image_second=R.drawable.ic_group_16
+
+        } ) {
+            Box{
+                Image(imageVector = ImageVector.vectorResource(id = image_second), contentDescription ="" )
+                Box(Modifier.align(Alignment.Center)) {
+                    TextPhase(number = "2")
+                }
+            }
+        }
+        IconToggleButton(checked = checked_third, onCheckedChange ={
+            checked_third=it
+            if(it){
+                image_third=R.drawable.round_green
+                image_first=R.drawable.ic_group_16
+                image_second=R.drawable.ic_group_16
+                checked_second=false
+                checked_first=false
+            }
+            else image_third=R.drawable.ic_group_16
+
+        } ) {
+            Box{
+                Image(imageVector = ImageVector.vectorResource(id = image_third), contentDescription ="" )
+                Box(Modifier.align(Alignment.Center)) {
+                    TextPhase(number = "3")
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun TextPhase(number:String){
+
+     Box {
+         Text(
+             text = number,
+             textAlign = TextAlign.Start,
+             fontSize = 10.sp,
+             textDecoration = TextDecoration.None,
+             letterSpacing = 0.4444443881511688.sp,
+
+             overflow = TextOverflow.Ellipsis,
+             modifier = Modifier
+
+                 .width(7.dp)
+                 .align(Alignment.Center)
+
+                 //.height(14.dp)
+
+                 .alpha(1f),
+             color = Color(red = 0.37109375f, green = 0.37109375f, blue = 0.37109375f, alpha = 1f),
+             fontWeight = FontWeight.Bold,
+             fontStyle = FontStyle.Normal,
+         )
+     }
+
+}
+
+@Composable
+fun SwitchWindow(state:Boolean,viewModel: SettingsViewModel,parameterType: ParameterType){
+    Row{
+        val textState = remember { mutableStateOf("OFF") }
+        val offsetState = remember{ mutableStateOf(52.dp)}
+        Text(
+            text =textState.value ,
+            textAlign = TextAlign.Justify,
+            fontSize = 10.sp,
+            textDecoration = TextDecoration.None,
+            letterSpacing = 0.4444443881511688.sp,
+            lineHeight = 16.sp,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                //.height(16.dp)
+                .offset(x = offsetState.value, y = 17.dp)
+                .alpha(1f),
+            color = Color(red = 0.37109375f, green = 0.37109375f, blue = 0.37109375f, alpha = 1f),
+            fontWeight = FontWeight.Bold,
+            fontStyle = FontStyle.Normal,
+        )
+
+
+
+        Switch(
+            checked = state, onCheckedChange = {
+                when(it){
+                    true->{textState.value="ON"
+                        offsetState.value=15.dp
+                    }
+                    false->{
+                        textState.value="OFF"
+                        offsetState.value=52.dp
+                    }
+
+                }
+                viewModel.handleEvent(SettingsViewEvent.CheckedChangeEvent(it,parameterType))
+                },
+            Modifier.scale(2f),
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White,
+                checkedTrackColor = Green,
+                uncheckedTrackColor = DarkGrayColor
+            )
+
+        )
+    }
+
+
+}
+
+@Composable
+
+fun SwitchItem(title: String,
+               state:Boolean,
+               viewModel:SettingsViewModel,
+               parameterType: ParameterType,
+               titleDraw:@Composable (String)->Unit){
+    Column(
+        Modifier
+            .background(Color.Transparent)
+
+    ){
+        Row(
+            Modifier
+                .fillMaxWidth()
+                , horizontalArrangement = Arrangement.SpaceBetween){
+
+            titleDraw(title)
+
+            Box(modifier = Modifier.offset(y= (-5).dp,x= (-8).dp)) {
+                SwitchWindow(state,viewModel,parameterType)
+            }
+
+        }
+    }
+
+}
+
+@Composable
+fun TitleSwitchMedium(text:String){
+    Text(
+        text = text,
+
+        fontSize = 16.sp,
+        textDecoration = TextDecoration.None,
+        letterSpacing = 0.4444443881511688.sp,
+        lineHeight = 24.sp,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier
+            .offset(y = 1.dp)
+
+
+            //.height(24.dp)
+
+            .alpha(1f),
+        color = Color(
+            red = 0.2252604216337204f,
+            green = 0.2252604216337204f,
+            blue = 0.2252604216337204f,
+            alpha = 1f
+        ),
+        fontWeight = FontWeight.Normal,
+        fontStyle = FontStyle.Normal,
+
+
+        )
+}
+@Composable
+fun TitleSwitchBold(text:String){
+    Text(
+        text = text,
+        textAlign = TextAlign.Start,
+        fontSize = 22.sp,
+        textDecoration = TextDecoration.None,
+        letterSpacing = 0.sp,
+        lineHeight = 32.sp,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier
+
+
+
+            //.height(32.dp)
+
+            .alpha(1f),
+        color = Color(red = 0f, green = 0f, blue = 0f, alpha = 1f),
+        fontWeight = FontWeight.Bold,
+        fontStyle = FontStyle.Normal,
+    )
+}
+@Composable
+fun TitleSliderMedium(text: String){
+
+    Text(
+        text = text,
+        textAlign = TextAlign.Start,
+        fontSize = 16.sp,
+        textDecoration = TextDecoration.None,
+        letterSpacing = 0.4444443881511688.sp,
+        lineHeight = 26.sp,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier
+
+            .width(273.dp)
+
+            //.height(26.dp)
+
+            .alpha(1f),
+        color = Color(red = 0.2252604216337204f, green = 0.2252604216337204f, blue = 0.2252604216337204f, alpha = 1f),
+        fontWeight = FontWeight.Normal,
+        fontStyle = FontStyle.Normal,
+    )
+}
+
+
+@Composable
+fun TitleSliderBold(text:String){
+    Text(
+        text = text,
+        textAlign = TextAlign.Start,
+        fontSize = 16.sp,
+        textDecoration = TextDecoration.None,
+        letterSpacing = 0.4444443881511688.sp,
+        lineHeight = 26.sp,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier
+
+
+
+            //.height(26.dp)
+
+            .alpha(1f),
+        color = Color(red = 0.2252604216337204f, green = 0.2252604216337204f, blue = 0.2252604216337204f, alpha = 1f),
+        fontWeight = FontWeight.Bold,
+        fontStyle = FontStyle.Normal,
+    )
+}
+@Composable
+fun TextRange(range: IntRange ,prefix:String){
+    Text(
+        text = range.first.toString()+prefix,
+        textAlign = TextAlign.Start,
+        fontSize = 12.sp,
+        textDecoration = TextDecoration.None,
+        letterSpacing = 0.4444443881511688.sp,
+        lineHeight = 32.sp,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier
+            .offset(x = 5.dp, y = 5.dp)
+
+
+            //.height(32.dp)
+
+            .alpha(1f),
+        color = Color(red = 0.40442708134651184f, green = 0.40442708134651184f, blue = 0.40442708134651184f, alpha = 1f),
+        fontWeight = FontWeight.Bold,
+        fontStyle = FontStyle.Normal,
+    )
+    Text(
+        text = range.last.toString()+prefix,
+        textAlign = TextAlign.Start,
+        fontSize = 12.sp,
+        textDecoration = TextDecoration.None,
+        letterSpacing = 0.4444443881511688.sp,
+        lineHeight = 32.sp,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier
+            .offset(x = (-5).dp, y = 5.dp)
+
+
+            //.height(32.dp)
+
+            .alpha(1f),
+        color = Color(red = 0.40442708134651184f, green = 0.40442708134651184f, blue = 0.40442708134651184f, alpha = 1f),
+        fontWeight = FontWeight.Bold,
+        fontStyle = FontStyle.Normal,
+    )
+}
+
+   fun update(mean:Float):String{
+      val voltage= (mean*120 +150).toInt()
+       return  voltage.toString().replace(".", "")
+   }
+fun sliderState(range:IntRange,mean:String): Float {
+    val number=mean.toFloat()
+    val difference= range.run {endInclusive-start}
+    return (number-range.first)/difference
+}
+fun up(range: IntRange,position:Float):String {
+   val difference= range.run {endInclusive-start}
+    val current=(position*difference+range.first).toInt()
+    return current.toString()
+}
+   
+
+
+
