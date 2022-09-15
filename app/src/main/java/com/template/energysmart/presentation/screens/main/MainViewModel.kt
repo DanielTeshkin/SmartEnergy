@@ -1,7 +1,9 @@
 package com.template.energysmart.presentation.screens.main
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.template.energysmart.presentation.base.BaseViewModel
 
 import com.template.energysmart.presentation.screens.main.models.MainUiController
 import com.template.energysmart.presentation.screens.main.models.MainViewState
@@ -11,56 +13,47 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 @HiltViewModel
-class MainViewModel @Inject constructor(private val mainInteractor: MainInteractor):ViewModel() {
+class MainViewModel @Inject constructor(private val mainInteractor: MainInteractor): BaseViewModel() {
 
-    private val uiController=MainUiController()
-    private val configuration=MutableStateFlow(MainViewState())
-    val send= MutableStateFlow(false)
+    private val uiController = MainUiController()
+    private val _configuration = MutableStateFlow(MainViewState())
+    val configuration=_configuration.asStateFlow()
+    private val loading = MutableStateFlow(false)
+    private val error = MutableStateFlow("")
 
     init {
-        mainInteractor.scope=viewModelScope
-        subscribe()
-        viewModelScope.launch {
-            mainInteractor.state.collect {
-                if (it is MainState.DataState) {
-
+        mainInteractor.apply {
+            scope = viewModelScope
+             viewModelScope.repeat(15000){getCurrentSystemState()}
+            subscribe(state) {
+                when (it) {
+                    is MainState.Loading -> loading.value = it.isLoading
+                    is MainState.Error -> error.value = it.throwable.localizedMessage as String
+                    is MainState.DataState -> {
+                        //Log.i("abc","fff")
+                        _configuration.value = uiController.reduceState(it)
+                    }
+                    is MainState.NotificationsState -> Log.i("fff","fff")
                 }
             }
         }
     }
-    fun sendEvent(event:MainViewEvent){
-        when(event){
-            is MainViewEvent.SendCommandIntent->sendCommand()
-            is MainViewEvent.ChangeModeIntent ->{}
-        //updateParameter()
-        }
-
-    }
 
 
-    private fun sendCommand(){
-        //if(configuration.value.mode!="STOP")mainInteractor.sendCommand("START")
-        //else mainInteractor.sendCommand("STOP")
-    }
-
-
-
-
-
-    private fun subscribe(){
-       viewModelScope.repeat(30000){
-        mainInteractor.reduce()
-       }
-    }
-
-
-
-}
-fun CoroutineScope.repeat(repeatMillis: Long, action: suspend () -> Unit) = this.launch {
-    withContext(Dispatchers.IO) {
-        while (isActive) {
-            action()
-            delay(repeatMillis)
-        }
+    fun handleEvent(event: MainViewEvent) = when (event) {
+        is MainViewEvent.AutoModeEvent -> mainInteractor.updateMode("AUTO")
+        is MainViewEvent.ManualModeEvent -> mainInteractor.updateMode("MANUAL")
+        is MainViewEvent.StartGeneratorEvent -> mainInteractor.sendCommand("START")
+        is MainViewEvent.StopGeneratorEvent -> mainInteractor.sendCommand("STOP")
     }
 }
+
+
+
+
+
+
+
+
+
+

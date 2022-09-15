@@ -42,5 +42,8 @@ class CreatePasswordViewModel @Inject constructor(private val interactor: Author
             }
         }
     }
+    fun disableButton(){
+        _enabled.value=false
+    }
     fun createPassword(phone:String,password:String)=interactor.createPassword(phone, password)
 }

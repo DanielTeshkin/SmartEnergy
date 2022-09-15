@@ -25,3 +25,5 @@ val MainGrayColor=Color(
 )
 val DarkGrayColor=Color(0xFFACB9C5)
 val GreenAlpha= Color(0xFF1FDB5A).copy(alpha = 0.7f)
+val GreenNotify=Color(red = 0.8640000224113464f, green = 0.9333333373069763f, blue = 0.8313725590705872f, alpha = 1f)
+val Orange=Color(red = 0.8941176533699036f, green = 0.6727843284606934f, blue = 0.24313724040985107f, alpha = 1f)

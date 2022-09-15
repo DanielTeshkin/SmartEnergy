@@ -23,7 +23,7 @@ fun navigation(navController: NavHostController){
     //else
         installNavHost(
             navController = navController,
-            startDestination = "settings"
+            startDestination = "start"
         )
 
 }

@@ -1,59 +1,32 @@
 package com.template.energysmart.presentation.screens.settings.components
-import android.annotation.SuppressLint
-import android.widget.SeekBar
-import android.widget.Switch
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 
 
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.versionedparcelable.ParcelField
 import com.smarttoolfactory.slider.ColorfulSlider
-import com.smarttoolfactory.slider.MaterialSliderColors
 import com.smarttoolfactory.slider.MaterialSliderDefaults
 import com.smarttoolfactory.slider.SliderBrushColor
 import com.template.energysmart.R
@@ -62,10 +35,8 @@ import com.template.energysmart.presentation.screens.settings.ParameterValueType
 import com.template.energysmart.presentation.screens.settings.SettingsViewEvent
 import com.template.energysmart.presentation.screens.settings.SettingsViewModel
 import com.template.energysmart.presentation.theme.DarkGrayColor
-import com.template.energysmart.presentation.theme.Gray
 import com.template.energysmart.presentation.theme.Green
 import com.template.energysmart.presentation.theme.MainGrayColor
-import kotlin.math.absoluteValue
 
 @Composable
 
@@ -82,7 +53,6 @@ fun SliderParameter(
 
     Column(
         Modifier
-
             .background(MainGrayColor)
             .padding(top = 13.dp)
             .width(331.dp)) {
@@ -94,15 +64,20 @@ fun SliderParameter(
 
        }
 
-        Row() {
+        Row {
+            val sliderPosition=remember{ mutableStateOf(sliderState(range,mean.toString()))}
+            val text= remember{ mutableStateOf(mean.toString())}
+
             Box(Modifier.width(240 .dp)) {
                 ColorfulSlider(
                     value = sliderState(range,mean.toString()),
                     thumbRadius = 15.dp,
                     trackHeight = 20.dp,
                     onValueChange = { it ->
-                       viewModel.handleEvent(SettingsViewEvent.ValueChangerEvent(up(range,it),parameterValueType))
-                    },
+
+                             viewModel.handleEvent(SettingsViewEvent.ValueChangerEvent(
+                                 textFieldState(range,it),parameterValueType))
+                                    },
                     colors = MaterialSliderDefaults.materialColors(
                         inactiveTrackColor = SliderBrushColor(color = DarkGrayColor),
                         activeTrackColor = SliderBrushColor(Green),
@@ -113,11 +88,11 @@ fun SliderParameter(
                     )
             }
 
-                val focusManager = LocalFocusManager.current
-                TextField(
+            TextField(
                     value = mean.toString(),
                     onValueChange = {
                         if(it.isNotEmpty()) {
+
                             viewModel.handleEvent(SettingsViewEvent.ValueChangerEvent(it,parameterValueType))
                         }
                     },
@@ -166,8 +141,8 @@ fun Test(){
 }
 
 @Composable
-@Preview
-fun PanelPhaseControl(enabled:Boolean=false){
+fun PanelPhaseControl(enabled:Boolean=false,viewModel: SettingsViewModel
+){
     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()){
         Text(
             text = "Контроль по фазе",
@@ -210,14 +185,14 @@ fun PanelPhaseControl(enabled:Boolean=false){
         )
         else
             Box(Modifier.offset(y= (-10).dp)) {
-                PanelPhase()
+                PanelPhase(viewModel)
             }
 
 
     }
 }
 @Composable
-fun PanelPhase(){
+fun PanelPhase(viewModel: SettingsViewModel) {
     var checked_first by remember{ mutableStateOf(true)}
     var image_first by remember {
         mutableStateOf(R.drawable.round_green)
@@ -241,6 +216,7 @@ fun PanelPhase(){
                 checked_third=false
             }
             else image_first=R.drawable.ic_group_16
+            viewModel.handleEvent(SettingsViewEvent.СhoicePhaseEvent(it,1))
 
         } ) {
                  Box{
@@ -261,6 +237,7 @@ fun PanelPhase(){
 
             }
             else image_second=R.drawable.ic_group_16
+            viewModel.handleEvent(SettingsViewEvent.СhoicePhaseEvent(it,2))
 
         } ) {
             Box{
@@ -280,6 +257,7 @@ fun PanelPhase(){
                 checked_first=false
             }
             else image_third=R.drawable.ic_group_16
+            viewModel.handleEvent(SettingsViewEvent.СhoicePhaseEvent(it,2))
 
         } ) {
             Box{
@@ -324,8 +302,19 @@ fun TextPhase(number:String){
 @Composable
 fun SwitchWindow(state:Boolean,viewModel: SettingsViewModel,parameterType: ParameterType){
     Row{
-        val textState = remember { mutableStateOf("OFF") }
-        val offsetState = remember{ mutableStateOf(52.dp)}
+        val textState = remember { mutableStateOf(
+            when(state){
+            true->"ON"
+            false->"OFF" }
+        )
+        }
+        val offsetState = remember{ mutableStateOf(
+            when(state) {
+               true-> 15.dp
+                false->52.dp
+            }
+        )}
+        val switchState= remember { mutableStateOf(state)}
         Text(
             text =textState.value ,
             textAlign = TextAlign.Justify,
@@ -343,10 +332,9 @@ fun SwitchWindow(state:Boolean,viewModel: SettingsViewModel,parameterType: Param
             fontStyle = FontStyle.Normal,
         )
 
-
-
         Switch(
-            checked = state, onCheckedChange = {
+            checked =switchState.value , onCheckedChange = {
+                switchState.value=it
                 when(it){
                     true->{textState.value="ON"
                         offsetState.value=15.dp
@@ -355,9 +343,8 @@ fun SwitchWindow(state:Boolean,viewModel: SettingsViewModel,parameterType: Param
                         textState.value="OFF"
                         offsetState.value=52.dp
                     }
-
                 }
-                viewModel.handleEvent(SettingsViewEvent.CheckedChangeEvent(it,parameterType))
+                viewModel.handleEvent(SettingsViewEvent.SwitchStateChangeEvent(it,parameterType))
                 },
             Modifier.scale(2f),
             colors = SwitchDefaults.colors(
@@ -373,7 +360,6 @@ fun SwitchWindow(state:Boolean,viewModel: SettingsViewModel,parameterType: Param
 }
 
 @Composable
-
 fun SwitchItem(title: String,
                state:Boolean,
                viewModel:SettingsViewModel,
@@ -540,16 +526,12 @@ fun TextRange(range: IntRange ,prefix:String){
     )
 }
 
-   fun update(mean:Float):String{
-      val voltage= (mean*120 +150).toInt()
-       return  voltage.toString().replace(".", "")
-   }
 fun sliderState(range:IntRange,mean:String): Float {
     val number=mean.toFloat()
     val difference= range.run {endInclusive-start}
     return (number-range.first)/difference
 }
-fun up(range: IntRange,position:Float):String {
+fun textFieldState(range: IntRange,position:Float):String {
    val difference= range.run {endInclusive-start}
     val current=(position*difference+range.first).toInt()
     return current.toString()

@@ -1,17 +1,16 @@
 package com.template.energysmart.domain
 
 import com.template.energysmart.data.remote.api.model.request.Command
-import com.template.energysmart.data.remote.api.model.response.Parameter
+import com.template.energysmart.data.remote.api.model.request.ParameterRequest
 import com.template.energysmart.domain.mappers.Mapper
-import com.template.energysmart.domain.model.GeneratorDataModel
+import com.template.energysmart.domain.model.DeviceState
+import com.template.energysmart.domain.model.EnergyControlModel
 import com.template.energysmart.domain.model.NotificationModel
-import com.template.energysmart.domain.model.SettingsModel
 import com.template.energysmart.domain.repositories.DevicesRepository
 import com.template.energysmart.domain.repositories.NotificationsRepository
 import com.template.energysmart.domain.repositories.SettingsRepository
 import com.template.energysmart.presentation.screens.settings.model.UpdateSettingsModel
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class GeneratorUseCase @Inject constructor(private val devicesRepository: DevicesRepository,
@@ -22,6 +21,7 @@ class GeneratorUseCase @Inject constructor(private val devicesRepository: Device
 
 
    fun sendCommand(command: Command)= devicesRepository.sendCommand(command)
+    fun updateMode(command: Command)=devicesRepository.updateMode(command)
 
     private suspend fun notificationMap()=
         notificationsRepository.getNotificationList().map {
@@ -33,18 +33,24 @@ class GeneratorUseCase @Inject constructor(private val devicesRepository: Device
         val result=settingsRepository.getParameter()
         emit(mapper.mapParameter(result))
     }
+    fun invokeNotifications()= flow {
+        val result=notificationMap()
+        emit(result)
+    }
 
 
     fun invoke()= flow {
         val result=settingsRepository.getParameter()
+        val device=devicesRepository.getDevice()
+       // val notifications=notificationMap()
+       // emit(DeviceState.NotificationsState(notifications))
         val metrics=getMetrics()
-        val model=mapper.map(metrics,result)
-        emit(model)
-
+        val model=mapper.map(metrics,result,device)
+        emit(DeviceState.ControlState(model))
     }
 
     fun updateParameter(parameter: UpdateSettingsModel)=settingsRepository.updateParameter(
-        Parameter(
+        ParameterRequest(
             ecoEnable = parameter.ecoMode,
             voltage_control = parameter.voltageControl,
             phasescount = parameter.phaseControl,
@@ -59,16 +65,10 @@ class GeneratorUseCase @Inject constructor(private val devicesRepository: Device
             eco_generator_run_time = parameter.timeWork,
             prof_generator_run_time = parameter.timeWorkPreventive,
             start_time = parameter.timeBeforeWorkPreventive,
-            reset_oil_change = parameter.odometerChangeOil,
-            toil = parameter.generalOdometr.toDouble()
-
+            reset_oil_change = parameter.odometerChangeOil.toDouble(),
+            toil = parameter.generalOdometr.toDouble(),
+            phasecontrol = parameter.value
         )
     )
-
-
-
-
-
-
-
 }
+

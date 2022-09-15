@@ -44,7 +44,7 @@ class SystemStateController(private val voltage1:Int,
             in 101..170->SystemState.CRITICAL
             in 171..200->SystemState.WARNING
             in 201..240->SystemState.STABLE
-            else -> SystemState.STABLE
+            else -> SystemState.CRITICAL
         }
 
     private fun getNetworkState():SystemState{
@@ -54,16 +54,17 @@ class SystemStateController(private val voltage1:Int,
                 val max= maxOf(voltage1,voltage2,voltage3)
                 val maxState=checkedState(max)
                 val minState=checkedState(min)
-                if (maxState ==SystemState.CRITICAL)maxState
-                else minState
+                 return when (maxState==SystemState.CRITICAL){
+                     true->maxState
+                     false->minState
+                 }
+
             }
            1-> checkedState(voltage1)
            2-> checkedState(voltage2)
            3-> checkedState(voltage3)
            else->SystemState.DISABLED
-
-
-        }
+       }
     }
 
     private fun getGeneratorState()=checkedState(voltageGenerator)

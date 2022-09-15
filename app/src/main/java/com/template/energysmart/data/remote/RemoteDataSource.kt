@@ -12,6 +12,7 @@ import com.template.energysmart.data.remote.api.base.BaseApiResponse
 import com.template.energysmart.data.remote.api.model.request.*
 import com.template.energysmart.data.remote.api.model.response.*
 import retrofit2.Response
+import retrofit2.http.Body
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -74,14 +75,18 @@ class RemoteDataSource @Inject constructor(private val serverApi: ServerApi,cont
      suspend fun sendCommand(commandRequest: CommandRequest): BaseApiResponse<Status>  =
          processResponse { serverApi.sendCommand(commandRequest) }
 
+    suspend fun sendMode( commandRequest: CommandRequest):BaseApiResponse<Status> = processResponse {
+        serverApi.sendMode(commandRequest)
+    }
+
      suspend fun getMetrics(id: String): BaseApiResponse<Metric> =processResponse { serverApi.getMetrics(id) }
 
      suspend fun getParameters(id: String): BaseApiResponse<Parameter> = processResponse { serverApi.getParameters(id) }
 
 
      suspend fun changeParameters(
-        id: String,
-        parameter: Parameter
+         id: String,
+         parameter: ParameterRequest
     ): BaseApiResponse<Parameter> = processResponse { serverApi.changeParameters(id, parameter) }
 
      suspend fun getNotifications(): BaseApiResponse<List<Notification>> = processListResponse { serverApi.getNotifications() }

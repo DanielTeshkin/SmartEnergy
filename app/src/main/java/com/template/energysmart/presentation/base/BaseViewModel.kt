@@ -6,7 +6,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 
 abstract class BaseViewModel :ViewModel() {
-   private fun CoroutineScope.repeat(repeatMillis: Long, action: suspend () -> Unit) = this.launch {
+   protected fun CoroutineScope.repeat(repeatMillis: Long, action: suspend () -> Unit) = this.launch {
         withContext(Dispatchers.IO) {
             while (isActive) {
                 action()
@@ -24,7 +24,6 @@ abstract class BaseViewModel :ViewModel() {
     protected fun <T> subscribe(flow: Flow<T>, action: suspend (T) -> Unit) {
         viewModelScope.launch {
             while (isActive) {
-                delay(1000)
                 flow.collect{
                     action.invoke(it)
                 }

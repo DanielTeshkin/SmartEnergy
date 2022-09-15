@@ -8,7 +8,7 @@ data class SettingsViewState(
     val error:String="",
     val generalSettingsData: GeneralSettingsData= GeneralSettingsData(),
     val general_odometr:String ="231",
-    val odometr_before_change_oil:String ="12",
+    val odometr_before_change_oil:String="&é",
     val notifyEnabled:Boolean=false,
     val phaseControl:Boolean=true,
     val phaseFirstState:Boolean=false,

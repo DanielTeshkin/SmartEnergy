@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class NotificationRepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDataSource):BaseRepository(),NotificationsRepository{
 
-   override suspend fun getNotificationList()=handleOrEmptyList { remoteDataSource.getNotifications() }
+   override suspend fun getNotificationList()= handleOrEmptyList { remoteDataSource.getNotifications() }
    override suspend fun clickOnOk(id: String): Status =handleOrDefault(Status()){remoteDataSource.clickOnOk(id)}
 
 

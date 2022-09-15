@@ -48,6 +48,7 @@ class DeviceViewModel @Inject constructor(private val interactor: DeviceInteract
          interactor.bindDevice(state.value.uid,state.value.password)
          start(viewModelScope) {
              interactor.response.collect {
+                 Log.i("mg","mgg")
                  when (it) {
                      is ResponseState.Loading -> _loading.value = true
                      is ResponseState.Success -> _navigation.emit(true)

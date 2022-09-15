@@ -8,5 +8,11 @@ data class Device(
     @SerializedName("date_update") val date_update : String="",
     @SerializedName("comment") val comment : String="",
     @SerializedName("command") val command : String ="",
-    @SerializedName("users") val users : List<String> = listOf()
+    @SerializedName("mode") val mode : String ="",
+    @SerializedName("users") val users : List<User> = listOf()
 )
+data class User(
+    @SerializedName("username") val username:String ="",
+    @SerializedName("first_name") val first_name:String? ="",
+
+    )

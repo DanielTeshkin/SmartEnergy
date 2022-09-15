@@ -18,16 +18,13 @@ class DevicesRepositoryIml @Inject constructor(private val remote: RemoteDataSou
         val result=handleOrEmptyList { remote.getDevices()  }
         emit(result)
     }
-    override fun getDevice(): Flow<Device> = flow {
+    override suspend fun getDevice() = handleOrDefault(Device()){remote.getDevice(local.getDeviceId())}
 
-        val result=handleOrDefault(Device()){remote.getDevice(local.getDeviceId())}
-        emit(result)
-    }
     override suspend fun getMetrics() = handleOrDefault(Metric()){remote.getMetrics(local.getDeviceId())}
 
    override fun sendCommand(command:Command)=flow {
-
-     val result=  handleOrDefault(Status()) { remote.sendCommand(CommandRequest(local.getDeviceId(),command)) }
+       val result= handleOrDefault(Status()) {
+           remote.sendCommand(CommandRequest(local.getDeviceId(), command)) }
           emit(result)
    }
 
@@ -39,5 +36,15 @@ class DevicesRepositoryIml @Inject constructor(private val remote: RemoteDataSou
 
     override fun saveDevice(id: String) =local.saveDevice(id)
 
+    override fun updateMode(command: Command) = flow {
+      val result = handleOrDefault(Status()) {
+            remote.sendMode(
+                CommandRequest(
+                    local.getDeviceId(), command
+                )
+            )
+        }
+        emit(result)
+    }
 
 }

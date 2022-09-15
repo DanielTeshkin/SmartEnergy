@@ -1,8 +1,9 @@
 package com.template.energysmart.presentation.screens.settings
 
 sealed class SettingsViewEvent{
-    data class CheckedChangeEvent(val state:Boolean,val parameter:ParameterType):SettingsViewEvent()
+    data class SwitchStateChangeEvent(val state:Boolean,val parameter:ParameterType):SettingsViewEvent()
     data class ValueChangerEvent(val input:String,val parameter: ParameterValueType):SettingsViewEvent()
+    data class СhoicePhaseEvent(val state:Boolean,val number:Int):SettingsViewEvent()
     object ResetOdometrEvent :SettingsViewEvent()
     object ResetOdometrToChangeOilEvent :SettingsViewEvent()
 }

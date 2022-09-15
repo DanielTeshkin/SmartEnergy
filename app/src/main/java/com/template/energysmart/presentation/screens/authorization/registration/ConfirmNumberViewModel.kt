@@ -40,6 +40,9 @@ class ConfirmNumberViewModel @Inject constructor( private val interactor: Author
         _phone.value=value
         _enabled.value = (value.isNotEmpty() and (value.length==11))
     }
+    fun disableButton(){
+        _enabled.value=false
+    }
 
     fun confirmNumber()=interactor.confirmNumber(phone.value)
 }

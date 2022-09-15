@@ -1,6 +1,7 @@
 package com.template.energysmart.presentation.data
 
 import com.template.energysmart.R
+import com.template.energysmart.data.remote.api.model.request.Command
 import com.template.energysmart.domain.model.Mode
 import com.template.energysmart.domain.model.PhasesStateModel
 import com.template.energysmart.domain.model.PowerSource
@@ -24,79 +25,63 @@ class ResourceSource {
     )
     val auto = mutableMapOf(Mode.AUTO to R.drawable.auto_button,Mode.MANUAL to R.drawable.auto_button_gray)
     val handle= mutableMapOf(Mode.AUTO to R.drawable.hand_button_green,Mode.MANUAL to R.drawable.hand_button_gray)
-    val repositoryPhases= mutableMapOf(PowerSource.NETWORK to PhasesResourceNetwork())
-    inner class PhasesResourceNetwork(){
-        val phases= mutableMapOf(PhasesStateModel(
-            phase_state_1 = SystemState.DISABLED,
-            phase_state_2 = SystemState.DISABLED,
-            phase_state_3 = SystemState.DISABLED
-        ) to R.drawable.phases_line_gray,
-            PhasesStateModel(
-                phase_state_1 = SystemState.STABLE,
-                phase_state_2 = SystemState.STABLE,
-                phase_state_3 = SystemState.STABLE
-            ) to R.drawable.phases_line_green,
-            PhasesStateModel(
-                phase_state_1 = SystemState.CRITICAL,
-                phase_state_2 = SystemState.CRITICAL,
-                phase_state_3 = SystemState.CRITICAL
-            ) to R.drawable.phases_line_red,
-            PhasesStateModel(
-                phase_state_1 = SystemState.WARNING,
-                phase_state_2 = SystemState.WARNING,
-                phase_state_3 = SystemState.WARNING
-            ) to R.drawable.phases_line_yellow,
-            PhasesStateModel(
-                phase_state_1 = SystemState.STABLE,
-                phase_state_2 = SystemState.STABLE,
-                phase_state_3 = SystemState.CRITICAL
-            ) to R.drawable.phases_line_3_red_green,
-            PhasesStateModel(
-                phase_state_1 = SystemState.DISABLED,
-                phase_state_2 = SystemState.DISABLED,
-                phase_state_3 = SystemState.CRITICAL
-            ) to R.drawable.phases_line_3_red_gray,
-            PhasesStateModel(
-                phase_state_1 = SystemState.WARNING,
-                phase_state_2 = SystemState.WARNING,
-                phase_state_3 = SystemState.CRITICAL
-            ) to R.drawable.phases_line_3_red_yellow,
-            PhasesStateModel(
-                phase_state_1 = SystemState.WARNING,
-                phase_state_2 = SystemState.CRITICAL,
-                phase_state_3 = SystemState.WARNING
-            ) to R.drawable.phases_line_2_red_yellow,
-            PhasesStateModel(
-                phase_state_1 = SystemState.DISABLED,
-                phase_state_2 = SystemState.CRITICAL,
-                phase_state_3 = SystemState.DISABLED
-            ) to R.drawable.phases_line_2_red_gray,
-            PhasesStateModel(
-                phase_state_1 = SystemState.STABLE,
-                phase_state_2 = SystemState.CRITICAL,
-                phase_state_3 = SystemState.STABLE
-            ) to R.drawable.phases_line_2_red_green,
-            PhasesStateModel(
-                phase_state_1 = SystemState.CRITICAL,
-                phase_state_2 = SystemState.STABLE,
-                phase_state_3 = SystemState.STABLE
-            ) to R.drawable.phases_line_1_red_green,
-            PhasesStateModel(
-                phase_state_1 = SystemState.CRITICAL,
-                phase_state_2 = SystemState.DISABLED,
-                phase_state_3 = SystemState.DISABLED
-            ) to R.drawable.phases_line_1_red_gray,
-            PhasesStateModel(
-                phase_state_1 = SystemState.CRITICAL,
-                phase_state_2 = SystemState.WARNING,
-                phase_state_3 = SystemState.WARNING
-            ) to R.drawable.phases_line_1_red_yellow,
+    val actualCommand = mutableMapOf(PowerSource.GENERATOR to R.drawable.ic_stop_test,PowerSource.NETWORK to R.drawable.ic_start_test)
+    val stateGenerator= mutableMapOf(mapOf(Pair(Mode.AUTO,Command.START)) to R.drawable.start_test)
+    val pointNetworkState= mutableMapOf(SystemState.CRITICAL to R.drawable.point_network_red,
+        SystemState.DISABLED to R.drawable.point_network_gray,
+        SystemState.STABLE to R.drawable.point_network_green,
+        SystemState.WARNING to R.drawable.point_network_yellow)
 
 
-            )
-    }
-    inner class PhasesResourceGenerator(){
+    val repositoryPhases= mutableMapOf(PowerSource.NETWORK to PhasesResourceNetwork(),PowerSource.GENERATOR to PhasesResourceGenerator())
 
-    }
 
+}
+  abstract class PhasesResource(){
+      abstract val phaseFirstState : MutableMap<SystemState,Pair<Int,Int>>
+      abstract val phaseSecondState : MutableMap<SystemState,Pair<Int,Int>>
+      abstract val phaseThirdState : MutableMap<SystemState,Pair<Int,Int>>
+
+  }
+
+
+ class PhasesResourceNetwork:PhasesResource(){
+    override val phaseFirstState= mutableMapOf(SystemState.CRITICAL to Pair(R.drawable.phase_1_red,R.drawable.round_phase_3_red),
+        SystemState.WARNING to Pair(R.drawable.phase_1_yellow,R.drawable.round_phase_3_yellow),
+        SystemState.STABLE to Pair(R.drawable.phase_1_green ,R.drawable.round_phase_3),
+        SystemState.DISABLED to Pair(R.drawable.phase_1_gray, R.drawable.round_phase_3_gray)
+    )
+    override val phaseSecondState=mutableMapOf(SystemState.CRITICAL to
+            Pair(R.drawable.phase_2_red,R.drawable.round_phase_2_red),
+        SystemState.WARNING to Pair(R.drawable.phase_2_yellow,R.drawable.round_phase_2_yellow),
+        SystemState.STABLE to
+                Pair(R.drawable.phase_2_green,R.drawable.round_phase_2),
+        SystemState.DISABLED to Pair(R.drawable.phase_2_gray,R.drawable.round_phase_2_gray))
+   override val phaseThirdState=mutableMapOf(SystemState.CRITICAL to
+            Pair(R.drawable.phase_3_red,R.drawable.round_phase_1_red),
+        SystemState.WARNING to Pair(R.drawable.phase_3_yellow,R.drawable.round_phase_1_yellow),
+        SystemState.STABLE to
+                Pair(R.drawable.phase_3_green,R.drawable.round_phase_1),
+        SystemState.DISABLED to Pair(R.drawable.phase_3_gray,R.drawable.round_phase_1_gray))
+
+}
+ class PhasesResourceGenerator:PhasesResource(){
+  override  val phaseFirstState= mutableMapOf(SystemState.CRITICAL to
+            Pair(R.drawable.phase_generator_1_red,R.drawable.round_phase_3_red),
+        SystemState.WARNING to Pair(R.drawable.phase_generator_1_yellow,R.drawable.round_phase_3_yellow),
+        SystemState.STABLE to
+                Pair(R.drawable.phase_generator_1_green,R.drawable.round_phase_3),
+        SystemState.DISABLED to Pair(R.drawable.phase_generator_1_gray,R.drawable.round_phase_3_gray))
+   override val phaseSecondState= mutableMapOf(SystemState.CRITICAL to
+            Pair(R.drawable.phase_generator_2_red,R.drawable.round_phase_2_red),
+        SystemState.WARNING to Pair(R.drawable.phase_generator_2_yellow,R.drawable.round_phase_2_yellow),
+        SystemState.STABLE to
+                Pair(R.drawable.phase_generator_2_green,R.drawable.round_phase_2),
+        SystemState.DISABLED to Pair(R.drawable.phase_generator_2_gray,R.drawable.round_phase_2_gray))
+  override   val phaseThirdState= mutableMapOf(SystemState.CRITICAL to
+            Pair(R.drawable.phase_generator_3_red,R.drawable.round_phase_1_red),
+        SystemState.WARNING to Pair(R.drawable.phase_generator_3_yellow,R.drawable.round_phase_1_yellow),
+        SystemState.STABLE to
+                Pair(R.drawable.phase_generator_3_green,R.drawable.round_phase_1),
+        SystemState.DISABLED to Pair(R.drawable.phase_generator_3_gray,R.drawable.round_phase_1_gray))
 }

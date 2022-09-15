@@ -225,8 +225,10 @@ fun OutlineCustom(navController: NavController, viewModel: AuthorizationViewMode
             Button(
                 onClick = {
                     viewModel.signIn(phone.value, password.value, context)
+                   viewModel.disableButton()
 
-                }, modifier = Modifier
+                },
+                modifier = Modifier
                     .width(335.dp)
                     .height(50.dp), enabled = enabled.value, colors = ButtonDefaults.buttonColors(
                     backgroundColor = Green,

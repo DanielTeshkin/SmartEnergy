@@ -1,5 +1,6 @@
 package com.template.energysmart.presentation.screens.device.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -65,7 +66,7 @@ fun BindDeviceScreen(){
 fun BindDeviceContent(navController: NavController,viewModel: DeviceViewModel= hiltViewModel()) {
           LaunchedEffect(true ){
               viewModel.navigation.collect{ isNavigate->
-                  if(isNavigate) navController.navigate("settings")
+                  if(isNavigate) navController.navigate("main")
 
               }
           }
@@ -236,6 +237,7 @@ fun BindDeviceContent(navController: NavController,viewModel: DeviceViewModel= h
             val context= LocalContext.current
 
             Button(onClick = {
+                Log.i("mg","mg")
            viewModel.reduceEvent(DeviceViewEvent.BindDeviceEvent)
                              }, modifier = Modifier
                 .width(335.dp)

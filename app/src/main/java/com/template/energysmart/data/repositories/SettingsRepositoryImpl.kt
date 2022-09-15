@@ -2,9 +2,9 @@ package com.template.energysmart.data.repositories
 
 import com.template.energysmart.data.local.LocalDataSource
 import com.template.energysmart.data.remote.RemoteDataSource
+import com.template.energysmart.data.remote.api.model.request.ParameterRequest
 import com.template.energysmart.data.remote.api.model.response.Parameter
 import com.template.energysmart.domain.repositories.SettingsRepository
-import kotlinx.coroutines.flow.Flow
 
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -23,7 +23,7 @@ class SettingsRepositoryImpl @Inject constructor(private val remote: RemoteDataS
         local.saveParameter(result)
     }
 
-    override fun updateParameter( parameter: Parameter)= flow {
+    override fun updateParameter( parameter: ParameterRequest)= flow {
         val result =
             handleOrDefault(Parameter()) { remote.changeParameters(device_id, parameter) }
         emit(result)

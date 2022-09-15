@@ -7,30 +7,27 @@ data class GeneratorDataModel(
     val settingsControlModel: SettingsModel,
     val notifications:List<NotificationModel> =listOf()
     )
-
-
 data class EnergyControlModel(
-
-    val metric:GeneralMetric,
-    val generalState:GeneralState,
-    val power_source:PowerSource,
-    val mode:Mode,
+    val metric:GeneralMetric= GeneralMetric(),
+    val generalState:GeneralState= GeneralState(),
+    val power_source:PowerSource=PowerSource.NETWORK,
+    val mode:Mode=Mode.AUTO,
     val eco_control:EcoControl?=null,
-    val notifications:List<NotificationModel> =listOf()
-)
+
+    )
 
 data class GeneralState(
-    val phasesState:PhasesStateModel,
-    val phasesNetworkState:PhasesStateModel,
-    val energy_supply_home:SystemState,
-    val city_network:SystemState,
-    val generator_state:SystemState,
+    val phasesState:PhasesStateModel= PhasesStateModel(),
+    val phasesNetworkState:PhasesStateModel= PhasesStateModel(),
+    val energy_supply_home:SystemState=SystemState.STABLE,
+    val city_network:SystemState=SystemState.DISABLED,
+    val generator_state:SystemState=SystemState.STABLE,
 )
 data class PhasesStateModel(
 
-    val phase_state_1: SystemState,
-    val phase_state_2:SystemState,
-    val phase_state_3:SystemState
+    val phase_state_1: SystemState=SystemState.DISABLED,
+    val phase_state_2:SystemState=SystemState.DISABLED,
+    val phase_state_3:SystemState=SystemState.DISABLED
 )
 
 data class GeneralMetric(

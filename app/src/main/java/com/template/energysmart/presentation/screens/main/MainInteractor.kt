@@ -1,15 +1,19 @@
 package com.template.energysmart.presentation.screens.main
 
+import android.util.Log
 import com.template.energysmart.data.remote.api.model.request.Command
+import com.template.energysmart.data.remote.api.model.request.ParameterRequest
+import com.template.energysmart.data.remote.api.model.response.Notification
 import com.template.energysmart.data.remote.api.model.response.Parameter
 
 import com.template.energysmart.domain.GeneratorUseCase
 import com.template.energysmart.domain.NotificationUseCase
 import com.template.energysmart.domain.SettingsUseCase
-import com.template.energysmart.domain.model.GeneratorDataModel
-import com.template.energysmart.domain.model.Mode
+import com.template.energysmart.domain.model.*
 import com.template.energysmart.presentation.base.BaseInteractor
+import com.template.energysmart.presentation.data.NotificationsResource
 import com.template.energysmart.presentation.screens.main.models.MainViewState
+import com.template.energysmart.presentation.screens.notifications.NotificationViewState
 
 
 import com.template.energysmart.presentation.state.MainState
@@ -25,37 +29,47 @@ class MainInteractor @Inject constructor(private val devicesUseCase:GeneratorUse
 
     private val _state= MutableSharedFlow<MainState>()
     val state=_state.asSharedFlow()
-
-   init {
-     reduce()
-   }
+    fun sendCommand(command:String)= devicesUseCase.sendCommand( Command.valueOf(command)).handleResult()
+    fun updateMode(command:String)= devicesUseCase.updateMode( Command.valueOf(command)).handleResult()
 
 
 
+    fun getCurrentSystemState() {
+        devicesUseCase.invoke()
+            .handleResult({ isLoading ->
+                Log.i("error",isLoading.toString())
+                emit(_state, MainState.Loading(isLoading))
+                          },
+                { data ->
+                    when(data){
 
-    fun sendCommand(command:String)= devicesUseCase.sendCommand( Command.valueOf(command))
-    fun update(parameter: Parameter)=settingsUseCase.update(parameter =parameter)
+                        is DeviceState.ControlState -> {
+                            Log.i("data",data.energyControlModel.metric.time_work_timer)
+                            emit(_state, MainState.DataState(data.energyControlModel))
+                        }
 
+                    }
 
-    fun reduce(){
-        devicesUseCase.invoke().handleResult({ isLoading->emit(_state,MainState.Loading(isLoading))},
-            { data->
-                val state=MainViewState(
-                   phase_vol_1 =data.metric.voltage_1,
-                    phase_vol_2 = data.metric.voltage_2,
-                    phase_vol_3 = data.metric.voltage_3,
-                    temperature = data.metric.temperature,
-                    isAuto = data.mode== Mode.AUTO,
-                )
-                emit(_state,MainState.DataState(data))
-            },
-            { error-> emit(_state,MainState.Error(error))
+                },
+                { error ->
+                    Log.i("error",error.message.toString())
+                    emit(_state, MainState.Error(error))
 
-            }
+                }
             )
     }
 
-    fun transformToViewState(data: GeneratorDataModel) {
+
+
+    fun transformToViewState(model: NotificationModel) :NotificationViewState{
+        val resource=NotificationsResource()
+        return NotificationViewState(
+            image = resource.imageMap[model.data.image],
+            title = model.data.title,
+            description = model.data.description,
+            instruction = model.data.instruction,
+            theme = resource.themeMap[model.data.format]
+        )
 
     }
 

@@ -10,7 +10,7 @@ data class Metric(
     @SerializedName("err") val err : String="",
     @SerializedName("fmw") val fmw : String="",
     @SerializedName("fuel") val fuel : String="",
-    @SerializedName("gin") val gin : String="",
+    @SerializedName("gin") val gin : Double=0.0,
     @SerializedName("gpul") val gpul : Int=0,
     @SerializedName("in1") val input1 : Int=0,
     @SerializedName("in2") val input2 : Int=0,

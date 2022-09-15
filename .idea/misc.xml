@@ -3,37 +3,68 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/auto_button.xml" value="0.1685" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/auto_button_gray.xml" value="0.1685" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/auto_button_green.xml" value="0.1145" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/frozen.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/generator_green.xml" value="0.2555" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/generator_off.xml" value="0.129" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/generator_red.xml" value="0.2555" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/generator_stop_high.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/generator_yellow.xml" value="0.129" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/generqtor_stop_low.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/hand_button_gray.xml" value="0.16" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/hand_button_green.xml" value="0.1685" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic__home_gray.xml" value="0.1145" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_component_8.xml" value="0.16" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_ellipse_18.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_ev_station.xml" value="0.1295" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_extended.xml" value="0.1145" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_group_142.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_group_16.xml" value="0.1145" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_group_19__1_.xml" value="0.1145" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_home_green.xml" value="0.1715" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_home_red.xml" value="0.1715" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_home_yellow.xml" value="0.1715" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_instruction_test.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_launch_error_generator.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_launcher_background.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_oil.xml" value="0.1715" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_rectangle_90.xml" value="0.1685" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_rectangle_92.xml" value="0.1715" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_rectangle_92__1_.xml" value="0.16" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_settings_test.xml" value="0.1" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_stop_test.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/ic_union.xml" value="0.1145" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/line_electro.xml" value="0.1295" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/line_electro_city_green.xml" value="0.129" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/line_electro_city_red.xml" value="0.129" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/line_electro_city_yellow.xml" value="0.148" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/network_crash.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_1_gray.xml" value="0.145" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_1_green.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_1_red.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_1_yellow.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_2_gray.xml" value="0.145" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_2_green.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_2_red.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_2_yellow.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_3_gray.xml" value="0.145" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_3_green.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_3_red.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_3_yellow.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_generator_1_gray.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_generator_1_red.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_generator_1_yellow.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_generator_2_gray.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_generator_2_green.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_generator_2_red.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_generator_2_yellow.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_generator_3_gray.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_generator_3_green.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_generator_3_red.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phase_generator_3_yellow.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phases_3_red_gray.xml" value="0.129" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phases_generator_gray.xml" value="0.1715" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phases_generator_green.xml" value="0.1715" />
@@ -51,8 +82,22 @@
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phases_line_green.xml" value="0.129" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phases_line_red.xml" value="0.129" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/phases_line_yellow.xml" value="0.1715" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/point_network_gray.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/point_network_green.xml" value="0.145" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/point_network_red.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/point_network_yellow.xml" value="0.192" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/round_green.xml" value="0.148" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/round_phase_1.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/round_phase_1_gray.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/round_phase_1_red.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/round_phase_1_yellow.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/round_phase_2_gray.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/round_phase_2_red.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/round_phase_2_yellow.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/round_phase_3.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/round_phase_3_gray.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/round_phase_3_red.xml" value="0.192" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/EnergySmart/app/src/main/res/drawable/round_phase_3_yellow.xml" value="0.192" />
       </map>
     </option>
   </component>

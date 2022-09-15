@@ -28,11 +28,10 @@ interface ServerApi {
     @POST("/api/sign-up/")
     suspend fun registration(@Body request: SignUpRequestData): Response<AuthorizationData>
 
-
     @GET("/api/devices/")
     suspend  fun getDevices():Response<List<Device>>
 
-    @GET("/api/devices/{id}")
+    @GET("/api/devices/{id}/")
     suspend  fun getDevice(@Path("id") id: String):Response<Device>
 
     @POST("/api/devices/reg_device/")
@@ -41,6 +40,9 @@ interface ServerApi {
     @POST("/api/devices/command/")
     suspend  fun sendCommand(@Body commandRequest: CommandRequest):Response<Status>
 
+    @POST("/api/devices/mode/")
+    suspend fun sendMode(@Body commandRequest: CommandRequest):Response<Status>
+
     @GET("/api/metric/{id}/")
     suspend  fun getMetrics(@Path ("id") id:String):Response<Metric>
 
@@ -48,7 +50,7 @@ interface ServerApi {
     suspend fun getParameters(@Path("id") id:String):Response<Parameter>
 
     @POST("/api/parameter/{id}/")
-    suspend fun changeParameters(@Path("id") id:String,@Body parameter: Parameter):Response<Parameter>
+    suspend fun changeParameters(@Path("id") id:String, @Body parameter: ParameterRequest):Response<Parameter>
 
     @GET("/api/notification/get_list/")
     suspend  fun getNotifications():Response<List<Notification>>

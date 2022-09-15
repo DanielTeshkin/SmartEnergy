@@ -12,8 +12,10 @@ data class ApiErrorResponse<T>(
     val exception: ApiException
         get() = ApiException(message)
     companion object{
-        fun <T> createError(response: Response<T>):BaseApiResponse<T> =ApiErrorResponse(gson.fromJson(response.errorBody()?.string() ?: "", ErrorResponse::class.java).code)
-        fun <T> createErrorList(response: Response<List<T>>):BaseApiResponse<List<T>> =ApiErrorResponse(gson.fromJson(response.errorBody()?.string() ?: "", ErrorResponse::class.java).code)
+        fun <T> createError(response: Response<T>):BaseApiResponse<T> =
+            ApiErrorResponse(gson.fromJson(response.errorBody()?.string() ?: "", ErrorResponse::class.java).detail)
+        fun <T> createErrorList(response: Response<List<T>>):BaseApiResponse<List<T>> =
+            ApiErrorResponse(gson.fromJson(response.errorBody()?.string() ?: "", ErrorResponse::class.java).detail)
 
     }
 }

@@ -6,11 +6,9 @@ data class CommandRequest(
     @SerializedName("device_id") val device_id:String,
     @SerializedName("command") val command: Command,
 
-    ){
-    fun a(){
+    )
 
-    }
-}
+
 enum class Command {
     START,
     STOP,

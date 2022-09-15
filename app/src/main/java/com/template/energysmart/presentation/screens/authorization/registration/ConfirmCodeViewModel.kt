@@ -40,6 +40,9 @@ class ConfirmCodeViewModel @Inject constructor(private val interactor: Authoriza
         _code.value=value
         _enabled.value = value.isNotEmpty()
     }
+    fun disableButton(){
+        _enabled.value=false
+    }
 
     fun confirmCode(phone:String)=interactor.confirmCode(phone,code = code.value)
 

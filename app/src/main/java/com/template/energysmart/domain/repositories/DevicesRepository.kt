@@ -9,11 +9,12 @@ import com.template.energysmart.data.remote.api.model.response.Status
 import kotlinx.coroutines.flow.Flow
 
 interface DevicesRepository {
-   fun getDevices() : Flow<List<Device>>
-    fun getDevice():Flow<Device>
+    fun getDevices() : Flow<List<Device>>
+   suspend fun getDevice():Device
     suspend fun getMetrics():Metric
     fun sendCommand(command:Command):Flow<Status>
     fun bindDevice(data: BindDeviceData):Flow<Status>
     fun saveDevice(id:String)
+   fun updateMode(command: Command):Flow<Status>
 
 }

@@ -20,13 +20,13 @@ class SettingsViewModel @Inject constructor( private val settingsInteractor: Set
         settingsInteractor.apply {
             scope = viewModelScope
             handleState()
-            start(viewModelScope) {
-                    state.collect {
-                        Log.i("param", (it.settingsModel.preventiveStart!=null).toString())
-                        Log.i("error", it.error)
-                        _ui.value = controller.getStartViewState(it)
-                    }
+
+                subscribe(state) {
+                    _ui.value = controller.getStartViewState(it)
                 }
+
+
+
         }
     }
     fun update()=settingsInteractor.update(controller.getUpdateModel())

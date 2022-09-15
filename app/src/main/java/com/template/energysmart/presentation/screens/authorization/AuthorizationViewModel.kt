@@ -30,7 +30,9 @@ class AuthorizationViewModel @Inject constructor(private val interactor: Authori
     fun signIn(phone:String,password:String,context: Context){
          interactor.signIn(phone, password, context)
     }
-
+  fun disableButton(){
+      _enabled.value=false
+  }
     fun checkFieldsState(value:String){
         _enabled.value = value.isNotEmpty()
     }

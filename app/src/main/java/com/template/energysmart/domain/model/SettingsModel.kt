@@ -14,8 +14,8 @@ data class SettingsModel(
     val energy:String="12.4",
     val temperatureAir:String="",
     val temperatureGenerator: String="",
-    val general_odometr:String ="231",
-    val odometr_before_change_oil:String ="12",
+    val general_odometr:Int=213,
+    val odometr_before_change_oil:Int=12,
     val notifyEnabled:Boolean=false
     )
 data class EcoControl(

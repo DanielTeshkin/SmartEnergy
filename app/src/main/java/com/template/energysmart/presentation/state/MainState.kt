@@ -12,6 +12,7 @@ sealed class MainState {
     data class Loading(val isLoading: Boolean) : MainState()
     data class Error(val throwable: Throwable) : MainState()
     data class DataState(val data:EnergyControlModel): MainState()
+    data class NotificationsState(val list: List<NotificationModel>):MainState()
 }
 data class DataMain(var metric: MetricModel?= MetricModel(),
                     var parameter: Parameter?= Parameter(),

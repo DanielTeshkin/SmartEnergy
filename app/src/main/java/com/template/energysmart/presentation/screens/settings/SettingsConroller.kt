@@ -23,13 +23,13 @@ class SettingsController() {
     private val phaseSecondState=MutableStateFlow(false)
     private val phaseThirdState=MutableStateFlow(false)
     private val generalData= MutableStateFlow(GeneralSettingsData())
-    private val generalOdometr = MutableStateFlow("")
-    private val odometrToChangeOil= MutableStateFlow("")
+    private val generalOdometr = MutableStateFlow(231)
+    private val odometrToChangeOil= MutableStateFlow(12)
     private val timeWorkPreventive = MutableStateFlow(0)
     private val  timeBeforeStartPreventive= MutableStateFlow(0)
     private val loading= MutableStateFlow(false)
     private val error= MutableStateFlow("")
-    private val state= MutableStateFlow(SettingsViewState())
+    private val phaseCount=MutableStateFlow(0)
 
     fun getStartViewState(data: SettingsPresentationState):SettingsViewState {
         data.apply {
@@ -76,8 +76,8 @@ class SettingsController() {
         loading = loading.value,
         error = error.value,
         generalSettingsData = generalData.value,
-        general_odometr = generalOdometr.value,
-        odometr_before_change_oil =odometrToChangeOil.value,
+        general_odometr = generalOdometr.value.toString(),
+        odometr_before_change_oil = odometrToChangeOil.value.toString(),
         notifyEnabled = notifyEnabled.value,
         ecoEnable = ecoMode.value,
         preventiveMode = preventiveMode.value,
@@ -99,13 +99,22 @@ class SettingsController() {
 
     fun reduceEvent(event: SettingsViewEvent): SettingsViewState {
         when (event) {
-            is SettingsViewEvent.ResetOdometrEvent -> generalOdometr.value = "0"
-            is SettingsViewEvent.ResetOdometrToChangeOilEvent -> odometrToChangeOil.value = "0"
-            is SettingsViewEvent.CheckedChangeEvent -> reduceCheckedChangeEvent(event)
+            is SettingsViewEvent.ResetOdometrEvent -> generalOdometr.value = 0
+            is SettingsViewEvent.ResetOdometrToChangeOilEvent -> odometrToChangeOil.value = 0
+            is SettingsViewEvent.SwitchStateChangeEvent-> reduceCheckedChangeEvent(event)
             is SettingsViewEvent.ValueChangerEvent -> reduceValueChangeEvent(event)
+            is SettingsViewEvent.СhoicePhaseEvent -> reduceChoicePhaseEvent(event)
         }
     return getCurrentState()
     }
+
+    private fun reduceChoicePhaseEvent(event: SettingsViewEvent.СhoicePhaseEvent) {
+        if (event.state) phaseCount.value = event.number
+    }
+
+
+
+
 
     private fun reduceValueChangeEvent(event: SettingsViewEvent.ValueChangerEvent) {
         when(event.parameter){
@@ -126,7 +135,7 @@ class SettingsController() {
 
 
 
-    private fun reduceCheckedChangeEvent(event:SettingsViewEvent.CheckedChangeEvent){
+    private fun reduceCheckedChangeEvent(event:SettingsViewEvent.SwitchStateChangeEvent){
             when(event.parameter){
            ParameterType.ECO->ecoMode.value=event.state
             ParameterType.VOLTAGE_CONTROL->voltageControl.value=event.state
@@ -151,8 +160,9 @@ class SettingsController() {
         timePause.value,
         timeWorkPreventive.value,
         timeBeforeStartPreventive.value,
-        generalOdometr.value.toInt(),
-        odometrToChangeOil.value.toDouble()
+        generalOdometr.value,
+        odometrToChangeOil.value,
+        phaseCount.value
     )
 
 

@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.template.energysmart.R
 import com.template.energysmart.presentation.theme.*
 @Composable
-@Preview
+
 fun textInBorder(){
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -34,9 +34,25 @@ fun textInBorder(){
 
             .width(229.dp)
 
-            .clip(RoundedCornerShape(topStart = 19.dp, topEnd = 19.dp, bottomStart = 19.dp, bottomEnd = 19.dp))
+            .clip(
+                RoundedCornerShape(
+                    topStart = 19.dp,
+                    topEnd = 19.dp,
+                    bottomStart = 19.dp,
+                    bottomEnd = 19.dp
+                )
+            )
             .background(Color.Transparent)
-            .border(1.dp, Color(red = 0f, green = 0f, blue = 0f, alpha = 0.1599999964237213f), RoundedCornerShape(topStart = 19.dp, topEnd = 19.dp, bottomStart = 19.dp, bottomEnd = 19.dp))
+            .border(
+                1.dp,
+                Color(red = 0f, green = 0f, blue = 0f, alpha = 0.1599999964237213f),
+                RoundedCornerShape(
+                    topStart = 19.dp,
+                    topEnd = 19.dp,
+                    bottomStart = 19.dp,
+                    bottomEnd = 19.dp
+                )
+            )
             .padding(start = 14.dp, top = 10.dp, end = 14.dp, bottom = 10.dp)
 
             .alpha(1f)
@@ -66,5 +82,83 @@ fun textInBorder(){
             fontWeight = FontWeight.Normal,
             fontStyle = FontStyle.Normal,
         )
+    }
+}
+
+
+@Composable
+fun ButtonRed(){
+    Button(onClick = {},
+        colors = ButtonDefaults.buttonColors(backgroundColor = ErrorText),     shape = RoundedCornerShape(41.dp),
+        modifier = Modifier
+            .width(196.dp)
+            .height(44.dp))
+
+    {
+
+
+        Text(
+            text = "ок",
+            textAlign = TextAlign.Start,
+            fontSize = 14.sp,
+            textDecoration = TextDecoration.None,
+            letterSpacing = 1.5.sp,
+            lineHeight = 24.sp,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+
+                .width(21.dp)
+
+                //.height(24.dp)
+
+                .alpha(1f),
+            color = Color(red = 1f, green = 1f, blue = 1f, alpha = 1f),
+            fontWeight = FontWeight.Medium,
+            fontStyle = FontStyle.Normal,
+        )
+
+    }
+}
+@Composable
+
+fun ButtonOutlined(){
+    OutlinedButton(onClick = {},
+        colors = ButtonDefaults.buttonColors(Color.Transparent),     shape = RoundedCornerShape(41.dp),
+        modifier = Modifier
+            .width(196.dp)
+            .height(44.dp))
+
+    {
+
+
+
+        Text(
+            text = "ОК",
+            textAlign = TextAlign.Start,
+            fontSize = 14.sp,
+            textDecoration = TextDecoration.None,
+            letterSpacing = 1.5.sp,
+            lineHeight = 24.sp,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+
+
+
+                //.height(24.dp)
+
+                .alpha(1f),
+            color = Color(red = 0f, green = 0f, blue = 0f, alpha = 1f),
+            fontWeight = FontWeight.Medium,
+            fontStyle = FontStyle.Normal,
+        )
+
+
+    }
+}
+@Composable
+@Preview
+fun TestMy(){
+    Box(Modifier.background(YellowLemon)) {
+        ButtonOutlined()
     }
 }

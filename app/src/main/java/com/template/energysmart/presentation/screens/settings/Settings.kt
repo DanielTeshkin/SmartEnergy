@@ -33,7 +33,7 @@ import com.template.energysmart.presentation.theme.MainGrayColor
 @Composable
 @Preview
 fun SettingsScreen(navHostController: NavHostController= rememberNavController(),
-                   viewModel: SettingsViewModel= hiltViewModel()) {
+                   viewModel: SettingsViewModel= hiltViewModel(),scrollState: ScrollState = rememberScrollState()) {
 
     Column(
         modifier = Modifier
@@ -47,7 +47,7 @@ fun SettingsScreen(navHostController: NavHostController= rememberNavController()
             )
             .background(MainGrayColor)
             .fillMaxWidth()
-            .verticalScroll(ScrollState(0))
+            .verticalScroll(scrollState)
 
 
 
@@ -131,7 +131,7 @@ fun SettingsScreen(navHostController: NavHostController= rememberNavController()
             }
         }
         Box(Modifier.padding(start = 16.dp,end=16.dp,top=10.dp)) {
-            PanelPhaseControl(!state.phaseControl)
+            PanelPhaseControl(!state.phaseControl,viewModel)
         }
 
         Box(

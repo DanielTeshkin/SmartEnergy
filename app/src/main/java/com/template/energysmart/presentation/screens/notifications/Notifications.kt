@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 import com.template.energysmart.R
+import com.template.energysmart.presentation.screens.notifications.components.textInBorder
 import com.template.energysmart.presentation.theme.*
 
 @Composable
@@ -44,7 +45,6 @@ fun drawNotificationsFullScreen(
         modifier = Modifier
 
             .width(360.dp)
-            .height(720.dp)
             .clip(
                 RoundedCornerShape(
                     topStart = 12.dp,
@@ -64,45 +64,19 @@ fun drawNotificationsFullScreen(
                     bottomEnd = 12.dp
                 )
             )
-            .padding(start = 16.dp, top = 36.dp, end = 16.dp, bottom = 50.dp)
+            .padding(start = 16.dp, top = 176.dp, end = 16.dp, bottom = 50.dp)
 
             .alpha(1f)
 
 
     ) {
-
-        Box(
-
-
-            modifier = Modifier
-                .weight(1f)
-                .width(44.dp)
-
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 0.dp,
-                        topEnd = 0.dp,
-                        bottomStart = 0.dp,
-                        bottomEnd = 0.dp
-                    )
-                )
-                .background(Color.Transparent)
-
-                .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
-
-                .alpha(1f)
-
-
-        ) {
-        }
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(45.dp, Alignment.Top),
             modifier = Modifier
 
                 .fillMaxWidth()
-                .height(285.dp)
+
                 .clip(
                     RoundedCornerShape(
                         topStart = 0.dp,
@@ -148,7 +122,7 @@ fun drawNotificationsFullScreen(
                 modifier = Modifier
 
                     .width(312.dp)
-                    .height(77.dp)
+
                     .clip(
                         RoundedCornerShape(
                             topStart = 0.dp,
@@ -210,7 +184,9 @@ fun drawNotificationsFullScreen(
                 )
             }
         }
-
+        Box(Modifier.offset(y= (-25).dp)) {
+            textInBorder()
+        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(25.5.dp, Alignment.CenterVertically),
@@ -236,25 +212,9 @@ fun drawNotificationsFullScreen(
         ) {
 
 
-            Text(
-                text = "Запускаем  генератор?",
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                textDecoration = TextDecoration.None,
-                letterSpacing = 0.20000000298023224.sp,
 
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
 
-                    .fillMaxWidth()
 
-                    //.height(16.dp)
-
-                    .alpha(1f),
-                color = Color(red = 0.3541666567325592f, green = 0.3541666567325592f, blue = 0.3541666567325592f, alpha = 1f),
-                fontWeight = FontWeight.Normal,
-                fontStyle = FontStyle.Normal,
-            )
 
 
 
@@ -273,7 +233,8 @@ fun drawNotificationsFullScreen(
                     .clickable(
                         onClick = {}
                     )
-                    .offset(y = (-25).dp)
+                    .offset(y = (-15).dp)
+
 
             )
 
@@ -286,7 +247,31 @@ fun drawNotificationsFullScreen(
 @Composable
 @Preview
 fun test(){
-    drawNotificationsFullScreen(RedLight,R.drawable.cold_error,R.drawable.error_button,R.drawable.cancel_error,"Холодно",
+    drawNotificationsFullScreen(
+        YellowLemon,R.drawable.ic_oil,R.drawable.error_button,R.drawable.cancel_error,"Внимание",
         "Генератор не завелся,\n"
-                +"Низкая температура воздуха", ErrorText)
+                +"Низкий уровень масла", SimpleText)
+}
+
+@Composable
+fun TextMode(){
+    Text(
+        text = "Запускаем  генератор?",
+        textAlign = TextAlign.Center,
+        fontSize = 14.sp,
+        textDecoration = TextDecoration.None,
+        letterSpacing = 0.20000000298023224.sp,
+
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier
+
+            .fillMaxWidth()
+
+            //.height(16.dp)
+
+            .alpha(1f),
+        color = Color(red = 0.3541666567325592f, green = 0.3541666567325592f, blue = 0.3541666567325592f, alpha = 1f),
+        fontWeight = FontWeight.Normal,
+        fontStyle = FontStyle.Normal,
+    )
 }

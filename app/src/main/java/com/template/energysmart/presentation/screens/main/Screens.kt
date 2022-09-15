@@ -1,7 +1,7 @@
 package com.template.energysmart.presentation.screens.main
 
 
-import android.widget.ImageView
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -14,7 +14,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
@@ -22,43 +21,45 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.devs.vectorchildfinder.VectorChildFinder
 import com.template.energysmart.R
 import com.template.energysmart.presentation.screens.main.components.Temperature
 import com.template.energysmart.presentation.screens.main.components.drawParameterGeneratorText
-import com.template.energysmart.presentation.theme.Green
+import com.template.energysmart.presentation.screens.main.models.MainViewState
 import com.template.energysmart.presentation.theme.MainGrayColor
 
 
 @Composable
-fun ModeControlButton(){
+fun ModeControlButton(viewModel: MainViewModel, state: State<MainViewState>){
     Row(modifier = Modifier
 
         .background(Color.Transparent)
 
         ) {
-        val autoState = remember { mutableStateOf(true) }
+        Log.i("go","gond")
+        val autoState = remember { mutableStateOf(state.value.autoButtonIsEnabled) }
         val buttonAutoActive = remember {
-            mutableStateOf(R.drawable.auto_button)
+            mutableStateOf(state.value.autoButton)
         }
         val buttonHandActive = remember {
-            mutableStateOf(R.drawable.hand_button_gray)
+            mutableStateOf(state.value.manualButton)
         }
-        val handle = remember { mutableStateOf(false) }
+        val handle = remember { mutableStateOf(state.value.handButtonIsEnabled) }
         IconToggleButton(checked = autoState.value, onCheckedChange = {
             autoState.value = it
             when (it) {
                 true -> {
+                    viewModel.handleEvent(MainViewEvent.AutoModeEvent)
                     buttonAutoActive.value = R.drawable.auto_button
                     buttonHandActive.value = R.drawable.hand_button_gray
                     handle.value = false
                 }
                 false -> {
+                    viewModel.handleEvent(MainViewEvent.ManualModeEvent)
                     buttonAutoActive.value = R.drawable.auto_button_gray
                     buttonHandActive.value = R.drawable.hand_button_green
                     handle.value = false
@@ -75,11 +76,13 @@ fun ModeControlButton(){
             handle.value = it
             when (it) {
                 true -> {
+                    viewModel.handleEvent(MainViewEvent.ManualModeEvent)
                     buttonHandActive.value = R.drawable.hand_button_green
                     buttonAutoActive.value = R.drawable.auto_button_gray
                     autoState.value = false
                 }
                 false -> {
+                    viewModel.handleEvent(MainViewEvent.AutoModeEvent)
                     buttonHandActive.value = R.drawable.hand_button_green
                     buttonAutoActive.value = R.drawable.auto_button
                     autoState.value = true
@@ -99,12 +102,13 @@ fun ModeControlButton(){
 }
 
 @Composable
-@Preview
-fun FirstBlock() {
+
+fun FirstBlock(viewModel: MainViewModel, state: State<MainViewState>) {
     Box(
         Modifier
             .fillMaxWidth()
-            .height(258.dp),
+            .height(250.dp)
+
 
 
         ) {
@@ -115,6 +119,7 @@ fun FirstBlock() {
 
             ) {
             Box{
+                Log.i("go","dd")
             Box(
                 modifier = Modifier
                     .width(118.dp)
@@ -144,40 +149,47 @@ fun FirstBlock() {
                 ) {
 
                 Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.line_electro_city_green),
+                    imageVector = ImageVector.vectorResource(state.value.electricNetworkImage),
                     contentDescription = "image",
                     modifier = Modifier.align(Alignment.Center)
 
                 )
 
             }
-                Box(modifier = Modifier.align(Alignment.BottomCenter)
-                    .offset(y=7.dp)
+                Box(modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .offset(y = 7.dp)
                          ){
-                    TestPointNetwork()
+                    TestPointNetwork(state)
                 }
             }
-            //y=-8.dp
-            //x=25.dp
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.padding( top = 20.dp)
+            //star=31.dp(network)
+
+            Box(
+
+                modifier = Modifier.padding( top = 7.dp)
                 ) {
+                 Box(Modifier.padding(start = 31.dp)) {
+                     when(state.value.commandButtonIsEnabled){
+                         true -> TestPhaseNetwork(state)
+                         false -> TestPhaseGenerator(state = state)
+                     }
 
-                Image(
-                    ImageVector.vectorResource(R.drawable.phases_generator_green),
-                    contentDescription = "",
-                    modifier = Modifier.padding(start = 38.dp)
-                )
-
+                 }
+                Box(
+                    Modifier
+                        .padding(top = 17.dp)
+                        .offset(x = 114.dp)) {
+                    TestPhasePoint(state)
+                }
                 Column(
                     Modifier
                         .height(70.dp)
-                        .offset(x = 4.dp, y = 2.dp),
+                        .offset(x = 136.dp, y = 16.dp),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "0", textAlign = TextAlign.Start,
+                        text = state.value.phase_vol_3.toString(), textAlign = TextAlign.Start,
                         fontSize = 14.sp,
                         textDecoration = TextDecoration.None,
                         letterSpacing = 0.10000000149011612.sp,
@@ -200,7 +212,7 @@ fun FirstBlock() {
                         fontStyle = FontStyle.Normal,
                     )
                     Text(
-                        text = "0", textAlign = TextAlign.Start,
+                        text = state.value.phase_vol_2.toString(), textAlign = TextAlign.Start,
                         fontSize = 14.sp,
                         textDecoration = TextDecoration.None,
                         letterSpacing = 0.10000000149011612.sp,
@@ -222,7 +234,7 @@ fun FirstBlock() {
                         fontStyle = FontStyle.Normal,
                     )
                     Text(
-                        text = "0", textAlign = TextAlign.Start,
+                        text = state.value.phase_vol_1.toString(), textAlign = TextAlign.Start,
                         fontSize = 14.sp,
                         textDecoration = TextDecoration.None,
                         letterSpacing = 0.10000000149011612.sp,
@@ -263,7 +275,7 @@ fun FirstBlock() {
                         )
                     }
                     item {
-                        Temperature(temperature = "-15")
+                        Temperature(temperature = state.value.temperature.toString())
                     }
                     item {
                         Image(
@@ -280,7 +292,7 @@ fun FirstBlock() {
             )
 
             Image(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_home_green),
+                imageVector = ImageVector.vectorResource(state.value.homeImage),
                 contentDescription = "",
                 Modifier.padding(top = 21.dp)
             )
@@ -294,11 +306,16 @@ fun FirstBlock() {
 
 @Composable
 
-fun SecondBlock(navController: NavHostController= rememberNavController()) {
+fun SecondBlock(
+    navController: NavHostController = rememberNavController(),
+    viewModel: MainViewModel,
+    state: State<MainViewState>
+) {
 Box(
     Modifier
         .fillMaxHeight()
         .fillMaxWidth()) {
+    Log.i("go","s")
 
     Box(
         modifier = Modifier
@@ -330,11 +347,12 @@ Box(
 
     Rectangle()
         Column {
+            var image=state.value.commandButtonImage
             Box(Modifier.padding(start = 33.dp, end = 33.dp, top = 40.dp)) {
-                GeneratorBlock()
+                GeneratorBlock(state)
             }
             Box(modifier = Modifier.padding(start = 49.dp, end = 52.dp, top = 40.dp)) {
-                CommandAndNavigationPanel(navController)
+                CommandAndNavigationPanel(navController,viewModel,image,state.value.commandButtonIsEnabled)
             }
         }
 
@@ -346,7 +364,7 @@ Box(
 
 
 @Composable
-fun GeneratorBlock(){
+fun GeneratorBlock(state: State<MainViewState>) {
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -354,8 +372,9 @@ fun GeneratorBlock(){
             .fillMaxWidth()
 
     ) {
+        Log.i("go","dddf")
         Image(
-            imageVector = ImageVector.vectorResource(R.drawable.generator_off),
+            imageVector = ImageVector.vectorResource(state.value.generatorImage),
             contentDescription = "",
 
             )
@@ -373,7 +392,7 @@ fun GeneratorBlock(){
                         imageVector = ImageVector.vectorResource(R.drawable.ic_ev_station),
                         contentDescription = ""
                     )
-                    drawParameterGeneratorText(meanParameter = "70 %")
+                    drawParameterGeneratorText(meanParameter = state.value.stationText+" "+"%")
 
                 }
                 Row(modifier = Modifier.padding(top = 14.dp)) {
@@ -381,14 +400,14 @@ fun GeneratorBlock(){
                         imageVector = ImageVector.vectorResource(R.drawable.ic_union),
                         contentDescription = ""
                     )
-                    drawParameterGeneratorText(meanParameter = "151")
+                    drawParameterGeneratorText(meanParameter = state.value.timeText)
                 }
                 Row(modifier = Modifier.padding(top = 14.dp)) {
                     Image(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_oil),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_vector),
                         contentDescription = ""
                     )
-                    drawParameterGeneratorText(meanParameter = "3")
+                    drawParameterGeneratorText(meanParameter = state.value.oilText)
                 }
 
             }
@@ -398,44 +417,66 @@ fun GeneratorBlock(){
 
 @Composable
 
-fun CommandAndNavigationPanel(navController: NavHostController= rememberNavController()) {
+fun CommandAndNavigationPanel(
+    navController: NavHostController = rememberNavController(),
+    viewModel: MainViewModel,
+
+    image:Int,
+    checked:Boolean
+) {
+    var imageButton by remember { mutableStateOf(image) }
+    val checkedState = remember { mutableStateOf(checked) }
+    Log.i("go","dfsd")
     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-        val checkedState = remember { mutableStateOf(true) }
-        val imageButton = remember { mutableStateOf(R.drawable.ic_start_test) }
         IconButton(onClick = { navController.navigate("settings") }) {
             Image(
                 ImageVector.vectorResource(id = R.drawable.ic_settings_test),
                 contentDescription = "",
             )
         }
+        Log.i("go","dok")
 
         IconToggleButton(checked = checkedState.value, onCheckedChange = {
             checkedState.value = it
-            imageButton.value = if (it) R.drawable.ic_start_test
-            else R.drawable.ic_stop_test
+            when(it) {
+             true->  {
+               viewModel.handleEvent(MainViewEvent.StopGeneratorEvent)
+                 imageButton =  R.drawable.ic_start_test
+             }
+                else -> {
+                    viewModel.handleEvent(MainViewEvent.StartGeneratorEvent)
+                    imageButton= R.drawable.ic_stop_test
+                }
+            }
         }, Modifier.offset(y = (-27).dp)) {
             Image(
-                ImageVector.vectorResource(id = imageButton.value),
+                ImageVector.vectorResource(id = imageButton),
                 contentDescription = "",
 
                 )
         }
+        Log.i("go","dot")
 
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { Log.i("ddd","dd") }) {
             Image(
                 ImageVector.vectorResource(id = R.drawable.ic_instruction_test),
                 contentDescription = "",
             )
         }
+        Log.i("go","dob")
     }
+    Log.i("go","dfsdd")
 }
 
 @Composable
 
 fun Test(
     navController: NavHostController = rememberNavController(),
-
+     viewModel: MainViewModel = hiltViewModel()
     ){
+    Log.i("go","go0")
+    val state=viewModel.configuration.collectAsState()
+    Log.i("go","go")
     Column(modifier = Modifier
         .clip(
             RoundedCornerShape(
@@ -454,16 +495,16 @@ fun Test(
       
         ) {
         Box(Modifier.padding( top = 48.dp)) {
-            ModeControlButton()
+            Log.i("go","gon")
+            ModeControlButton(viewModel,state)
         }
         Box(Modifier.padding(start = 16.dp, end = 16.dp,top=32.dp)){
-            FirstBlock()
+            FirstBlock(viewModel,state)
         }
 
-        SecondBlock(navController)
-
-
+        SecondBlock(navController,viewModel,state)
     }
+    Log.i("go","dfdsdd")
 }
 
 
@@ -471,7 +512,7 @@ fun Test(
 fun Rectangle(){
     Box(
         Modifier
-            .padding(start = 54.dp)
+            .padding(start = 58.dp)
             .offset(y = (-7).dp)) {
         Box(
             modifier = Modifier
@@ -510,57 +551,65 @@ fun Rectangle(){
 
 @Composable
 
-fun TestPhaseNetwork(){
+fun TestPhaseNetwork(state: State<MainViewState>) {
 
 
     Box{
-     Image(ImageVector.vectorResource(id = R.drawable.phase_3_gray), contentDescription = "",Modifier.align(
-         Alignment.TopStart) )
-     Image(ImageVector.vectorResource(id = R.drawable.phase_2_gray), contentDescription = "",
-         Modifier.offset(x=26.dp)
+     Image(ImageVector.vectorResource(state.value.phaseFirstImage), contentDescription = "" )
+     Image(ImageVector.vectorResource(state.value.phaseImageSecond), contentDescription = "",
+         Modifier.offset(x= 26.dp)
 
 
              )
-     Image(ImageVector.vectorResource(id = R.drawable.phase_1_gray), contentDescription = "",
-         Modifier.offset(x=66.dp)
+     Image(ImageVector.vectorResource(state.value.phaseImageThird), contentDescription = "",
+         Modifier.offset(x= 53.dp)
      )
 
  }
 }
 @Composable
 
-fun TestPhaseGenerator(){
+fun TestPhasePoint(state: State<MainViewState>) {
+
+
+    Column( modifier = Modifier.height(75.dp)){
+        Image(ImageVector.vectorResource(state.value.phasePointThird), contentDescription = "" )
+        Image(ImageVector.vectorResource(state.value.phasePointSecond), contentDescription = "",Modifier.padding(top=8.dp)
+            )
+        Image(ImageVector.vectorResource(state.value.phasePointFirst), contentDescription = "",
+            Modifier.padding(top=8.dp)
+        )
+
+    }
+}
+@Composable
+
+fun TestPhaseGenerator(state: State<MainViewState>){
     Box(){
-        Image(ImageVector.vectorResource(id = R.drawable.phase_generator_3_green), contentDescription = "",
+        Image(ImageVector.vectorResource(state.value.phaseFirstImage), contentDescription = "",
             Modifier
-                .align(
-                    Alignment.TopEnd
-                )
-                .offset(x = 20.dp))
-        Image(ImageVector.vectorResource(id = R.drawable.phase_generator_2_green), contentDescription = "",
+
+                .offset(x=10.dp,y=12.dp))
+        Image(ImageVector.vectorResource(state.value.phaseImageSecond), contentDescription = "",
             Modifier
-                .align(
-                    Alignment.CenterEnd
-                )
-                .offset(x = 20.dp, y = 30.dp))
-        Image(ImageVector.vectorResource(id = R.drawable.phase_generator_1_green), contentDescription = "",
+
+                .offset(x = 17.dp, y = 40.dp))
+        Image(ImageVector.vectorResource(state.value.phaseImageThird), contentDescription = "",
             Modifier
-                .align(
-                    Alignment.BottomEnd
-                )
-                .offset(x = 20.dp, y = 10.dp))
+
+                .offset(x = 24.dp, y = 67.dp))
     }
 }
 
 @Composable
 
-fun TestPointNetwork(){
+fun TestPointNetwork(state: State<MainViewState>) {
     Row(){
-        Image(ImageVector.vectorResource(id = R.drawable.point_network_green), contentDescription = ""
+        Image(ImageVector.vectorResource(state.value.pNetworkImageFirst), contentDescription = ""
             )
-        Image(ImageVector.vectorResource(id = R.drawable.point_network_green), contentDescription = "", modifier = Modifier.padding(start=12.dp)
+        Image(ImageVector.vectorResource(state.value.pNetworkImageSecond), contentDescription = "", modifier = Modifier.padding(start=12.dp)
         )
-        Image(ImageVector.vectorResource(id = R.drawable.point_network_green), contentDescription = "", modifier = Modifier.padding(start=12.dp)
+        Image(ImageVector.vectorResource(state.value.pNetworkImageThird), contentDescription = "", modifier = Modifier.padding(start=12.dp)
         )
     }
 }
@@ -568,8 +617,8 @@ fun TestPointNetwork(){
 
 fun T(){
     Column {
-        TestPointNetwork()
-        TestPhaseNetwork()
+     //   TestPointNetwork(state)
+       // TestPhaseNetwork(state)
 
 
     }

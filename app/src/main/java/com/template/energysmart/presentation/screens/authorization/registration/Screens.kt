@@ -151,6 +151,7 @@ fun ConfirmNumberScreen(viewModel: ConfirmNumberViewModel = hiltViewModel(),navC
 
             Button(
                 onClick = {
+                    viewModel.disableButton()
                     viewModel.confirmNumber()
 
                 }, modifier = Modifier
@@ -323,6 +324,7 @@ fun ConfirmCodeScreen(phone:String="",navHostController: NavHostController= reme
 
             Button(
                 onClick = {
+                    viewModel.disableButton()
                   viewModel.confirmCode(phone)
 
                 }, modifier = Modifier
@@ -557,6 +559,7 @@ fun CreatePasswordScreen(phone: String = "", navController: NavHostController,vi
 
             Button(
                 onClick = {
+                    viewModel.disableButton()
                viewModel.createPassword(phone,password.value)
 
                 }, modifier = Modifier
