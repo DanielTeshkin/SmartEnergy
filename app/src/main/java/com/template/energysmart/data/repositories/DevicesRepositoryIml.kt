@@ -5,6 +5,7 @@ import com.template.energysmart.data.remote.RemoteDataSource
 import com.template.energysmart.data.remote.api.model.request.BindDeviceData
 import com.template.energysmart.data.remote.api.model.request.Command
 import com.template.energysmart.data.remote.api.model.request.CommandRequest
+import com.template.energysmart.data.remote.api.model.request.ModeRequest
 import com.template.energysmart.data.remote.api.model.response.Device
 import com.template.energysmart.data.remote.api.model.response.Metric
 import com.template.energysmart.data.remote.api.model.response.Status
@@ -28,6 +29,8 @@ class DevicesRepositoryIml @Inject constructor(private val remote: RemoteDataSou
           emit(result)
    }
 
+
+
     override fun bindDevice(data: BindDeviceData)=flow{
         val result=handleOrDefault(Status()){remote.bindDevice(data)}
         local.saveDevice(data.id)
@@ -39,12 +42,14 @@ class DevicesRepositoryIml @Inject constructor(private val remote: RemoteDataSou
     override fun updateMode(command: Command) = flow {
       val result = handleOrDefault(Status()) {
             remote.sendMode(
-                CommandRequest(
+                ModeRequest(
                     local.getDeviceId(), command
                 )
             )
         }
         emit(result)
     }
+
+    override fun getSavedDevice(): String=local.getDeviceId()
 
 }

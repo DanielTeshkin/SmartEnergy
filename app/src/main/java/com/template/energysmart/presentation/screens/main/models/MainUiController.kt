@@ -42,7 +42,7 @@ class MainUiController(){
      return  MainViewState(
          electricNetworkImage = source.network[data.generalState.city_network]?: R.drawable.line_electro,
          homeImage = source.home[data.generalState.energy_supply_home]?:R.drawable.ic_home_green,
-         imageStateGenerator = source.generator[data.generalState.generator_state],
+         generatorImage = source.generator[data.generalState.generator_state]?:R.drawable.generator_off,
          phase_vol_3 = data.metric.voltage_3,
          phase_vol_2 = data.metric.voltage_2,
          phase_vol_1 = data.metric.voltage_1,

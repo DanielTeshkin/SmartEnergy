@@ -17,6 +17,7 @@ data class DataNotification(
     val title:String="",
     val description:String="",
     val instruction:String?=null,
+    val action:String?=null,
     val image:ImageType?=null
 
     )

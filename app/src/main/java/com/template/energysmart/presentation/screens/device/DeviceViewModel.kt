@@ -16,7 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
-typealias Draw =@Composable Unit
+
 @HiltViewModel
 class DeviceViewModel @Inject constructor(private val interactor: DeviceInteractor): BaseViewModel(){
 
@@ -26,11 +26,21 @@ class DeviceViewModel @Inject constructor(private val interactor: DeviceInteract
     val error=_error.asStateFlow()
     private  val _navigation= MutableSharedFlow<Boolean>()
     val navigation=_navigation.asSharedFlow()
-
     private val _state= MutableStateFlow(DeviceViewState.BindDevice())
     val state=_state.asStateFlow()
     init {
-        interactor.scope=viewModelScope
+        interactor.apply {
+            scope = viewModelScope
+            getDevices()
+            subscribe(data){
+                when(it){
+                    is DeviceViewState.Loading -> _loading.value=it.loading
+                    is DeviceViewState.Error -> _error.value=it.throwable.message?:""
+                    is DeviceViewState.IsThereBindDevice ->_navigation.emit(it.exist)
+                    else -> {}
+                }
+            }
+        }
     }
     private fun updateUID(text:String){
         if (text.isEmpty()) _state.value=DeviceViewState.BindDevice(uid=text, password = state.value.password, enabled = false)
@@ -51,6 +61,8 @@ class DeviceViewModel @Inject constructor(private val interactor: DeviceInteract
                  Log.i("mg","mgg")
                  when (it) {
                      is ResponseState.Loading -> _loading.value = true
+
+
                      is ResponseState.Success -> _navigation.emit(true)
                      is ResponseState.Error -> _error.value = it.throwable.message ?: ""
                  }
@@ -60,10 +72,17 @@ class DeviceViewModel @Inject constructor(private val interactor: DeviceInteract
 
     fun reduceEvent(event: DeviceViewEvent){
         when(event){
-            is DeviceViewEvent.BindDeviceEvent -> bindDevice()
+            is DeviceViewEvent.BindDeviceEvent -> {
+                bindDevice()
+                DeviceViewState.BindDevice(uid = state.value.uid, password =state.value.password,enabled = false)
+            }
+
             is DeviceViewEvent.ChangeTextUIDEvent-> updateUID(event.text)
-            is DeviceViewEvent.ChangeTextPasswordEvent-> updatePassword(event.text)
+            is DeviceViewEvent.ChangeTextPasswordEvent-> {
+                DeviceViewState.BindDevice(uid = state.value.uid, password =state.value.password,enabled = true)
+                updatePassword(event.text)
+            }
+            }
         }
     }
 
-}

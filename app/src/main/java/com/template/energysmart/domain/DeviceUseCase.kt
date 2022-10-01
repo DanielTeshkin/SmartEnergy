@@ -22,6 +22,7 @@ class GeneratorUseCase @Inject constructor(private val devicesRepository: Device
 
    fun sendCommand(command: Command)= devicesRepository.sendCommand(command)
     fun updateMode(command: Command)=devicesRepository.updateMode(command)
+    fun closeAlert(id:String)=notificationsRepository.clickOnOk(id)
 
     private suspend fun notificationMap()=
         notificationsRepository.getNotificationList().map {
@@ -33,17 +34,14 @@ class GeneratorUseCase @Inject constructor(private val devicesRepository: Device
         val result=settingsRepository.getParameter()
         emit(mapper.mapParameter(result))
     }
-    fun invokeNotifications()= flow {
-        val result=notificationMap()
-        emit(result)
-    }
-
 
     fun invoke()= flow {
         val result=settingsRepository.getParameter()
         val device=devicesRepository.getDevice()
-       // val notifications=notificationMap()
-       // emit(DeviceState.NotificationsState(notifications))
+        val notifications=notificationMap()
+        if(notifications.isNotEmpty()) {
+            emit(DeviceState.NotificationsState(notifications))
+        }
         val metrics=getMetrics()
         val model=mapper.map(metrics,result,device)
         emit(DeviceState.ControlState(model))

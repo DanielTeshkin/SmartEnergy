@@ -2,6 +2,7 @@ package com.template.energysmart.presentation.screens.main
 
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -14,6 +15,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
@@ -23,14 +25,21 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.template.energysmart.R
+import com.template.energysmart.domain.model.FormatNotification
+import com.template.energysmart.domain.model.ImageType
+import com.template.energysmart.presentation.data.NotificationsResource
 import com.template.energysmart.presentation.screens.main.components.Temperature
 import com.template.energysmart.presentation.screens.main.components.drawParameterGeneratorText
 import com.template.energysmart.presentation.screens.main.models.MainViewState
-import com.template.energysmart.presentation.theme.MainGrayColor
+import com.template.energysmart.presentation.screens.notifications.NotificationViewState
+import com.template.energysmart.presentation.screens.notifications.drawNotificationsSmall
+import com.template.energysmart.presentation.theme.*
 
 
 @Composable
@@ -41,7 +50,7 @@ fun ModeControlButton(viewModel: MainViewModel, state: State<MainViewState>){
 
         ) {
         Log.i("go","gond")
-        val autoState = remember { mutableStateOf(state.value.autoButtonIsEnabled) }
+        val autoState =state.value.autoButtonIsEnabled
         val buttonAutoActive = remember {
             mutableStateOf(state.value.autoButton)
         }
@@ -49,8 +58,7 @@ fun ModeControlButton(viewModel: MainViewModel, state: State<MainViewState>){
             mutableStateOf(state.value.manualButton)
         }
         val handle = remember { mutableStateOf(state.value.handButtonIsEnabled) }
-        IconToggleButton(checked = autoState.value, onCheckedChange = {
-            autoState.value = it
+        IconToggleButton(checked = autoState, onCheckedChange = {
             when (it) {
                 true -> {
                     viewModel.handleEvent(MainViewEvent.AutoModeEvent)
@@ -67,7 +75,7 @@ fun ModeControlButton(viewModel: MainViewModel, state: State<MainViewState>){
             }
         }) {
             Image(
-              painterResource(id = buttonAutoActive.value),
+             ImageVector.vectorResource(id = state.value.autoButton),
                 contentDescription = ""
             )
         }
@@ -77,15 +85,11 @@ fun ModeControlButton(viewModel: MainViewModel, state: State<MainViewState>){
             when (it) {
                 true -> {
                     viewModel.handleEvent(MainViewEvent.ManualModeEvent)
-                    buttonHandActive.value = R.drawable.hand_button_green
-                    buttonAutoActive.value = R.drawable.auto_button_gray
-                    autoState.value = false
+
                 }
                 false -> {
                     viewModel.handleEvent(MainViewEvent.AutoModeEvent)
-                    buttonHandActive.value = R.drawable.hand_button_green
-                    buttonAutoActive.value = R.drawable.auto_button
-                    autoState.value = true
+
                 }
             }
         }) {
@@ -310,6 +314,7 @@ fun SecondBlock(
     navController: NavHostController = rememberNavController(),
     viewModel: MainViewModel,
     state: State<MainViewState>
+
 ) {
 Box(
     Modifier
@@ -347,7 +352,7 @@ Box(
 
     Rectangle()
         Column {
-            var image=state.value.commandButtonImage
+            val image=state.value.commandButtonImage
             Box(Modifier.padding(start = 33.dp, end = 33.dp, top = 40.dp)) {
                 GeneratorBlock(state)
             }
@@ -420,11 +425,11 @@ fun GeneratorBlock(state: State<MainViewState>) {
 fun CommandAndNavigationPanel(
     navController: NavHostController = rememberNavController(),
     viewModel: MainViewModel,
+    image: Int,
+    checked: Boolean,
 
-    image:Int,
-    checked:Boolean
 ) {
-    var imageButton by remember { mutableStateOf(image) }
+    var imageButton=image
     val checkedState = remember { mutableStateOf(checked) }
     Log.i("go","dfsd")
     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
@@ -434,8 +439,6 @@ fun CommandAndNavigationPanel(
                 contentDescription = "",
             )
         }
-        Log.i("go","dok")
-
         IconToggleButton(checked = checkedState.value, onCheckedChange = {
             checkedState.value = it
             when(it) {
@@ -457,7 +460,9 @@ fun CommandAndNavigationPanel(
         }
         Log.i("go","dot")
 
-        IconButton(onClick = { Log.i("ddd","dd") }) {
+        IconButton(onClick = {
+
+        }) {
             Image(
                 ImageVector.vectorResource(id = R.drawable.ic_instruction_test),
                 contentDescription = "",
@@ -474,9 +479,39 @@ fun Test(
     navController: NavHostController = rememberNavController(),
      viewModel: MainViewModel = hiltViewModel()
     ){
-    Log.i("go","go0")
+   val alertShow by viewModel.alertDialog.collectAsState()
+    //if (alertShow.id.isNotEmpty()){
+    val resource= NotificationsResource("tgg")
+
+
+    if (alertShow.id.isNotEmpty()) {
+        Dialog(
+            onDismissRequest = {},
+            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+        ) {
+            drawNotificationsSmall(viewModel, alertShow)
+        }
+    }
+        //  }
+        LaunchedEffect(true) {
+            viewModel.notification.collect {
+                if (it.title.isNotEmpty()) {
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        value = it,
+                       key = "state"
+                    )
+                    navController.navigate("notification")
+
+                }
+            }
+        }
+
+   // val loading by viewModel.loading.collectAsState()
+    val error by viewModel.error.collectAsState()
+         //if (loading) Loader()
+    if (error.isNotEmpty()) Toast.makeText(LocalContext.current,error, Toast.LENGTH_LONG).show()
     val state=viewModel.configuration.collectAsState()
-    Log.i("go","go")
+
     Column(modifier = Modifier
         .clip(
             RoundedCornerShape(

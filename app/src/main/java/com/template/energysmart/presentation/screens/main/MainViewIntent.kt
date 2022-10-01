@@ -7,4 +7,5 @@ sealed class MainViewEvent {
     object ManualModeEvent:MainViewEvent()
     object StartGeneratorEvent:MainViewEvent()
     object StopGeneratorEvent:MainViewEvent()
+    data class CloseAlertEvent(val id:String):MainViewEvent()
 }

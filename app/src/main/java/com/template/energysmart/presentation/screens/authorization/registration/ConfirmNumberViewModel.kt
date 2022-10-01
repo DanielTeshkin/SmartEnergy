@@ -31,7 +31,9 @@ class ConfirmNumberViewModel @Inject constructor( private val interactor: Author
                 when (it) {
                     is ResponseState.Loading -> _loading.value=true
                     is ResponseState.Success-> _navigation.emit(true)
-                    is ResponseState.Error->_error.value=it.throwable.message?:""
+                    is ResponseState.Error->{
+                        _enabled.value=true
+                        _error.value=it.throwable.message?:""}
                 }
             }
         }
@@ -44,5 +46,8 @@ class ConfirmNumberViewModel @Inject constructor( private val interactor: Author
         _enabled.value=false
     }
 
-    fun confirmNumber()=interactor.confirmNumber(phone.value)
+    fun confirmNumber(type:String?){
+        disableButton()
+        interactor.confirmNumber(phone.value, type?:"")
+    }
 }

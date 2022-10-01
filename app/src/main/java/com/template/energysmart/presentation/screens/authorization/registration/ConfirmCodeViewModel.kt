@@ -29,9 +29,15 @@ class ConfirmCodeViewModel @Inject constructor(private val interactor: Authoriza
         start(viewModelScope) {
             interactor.confirmCode.collect {
                 when (it) {
-                    is ResponseState.Loading -> _loading.value=true
+                    is ResponseState.Loading -> {
+                        _loading.value = it.isLoading
+                        _enabled.value=false
+                    }
                     is ResponseState.Success-> _navigation.emit(true)
-                    is ResponseState.Error->_error.value=it.throwable.message?:""
+                    is ResponseState.Error->{
+                        _error.value=it.throwable.message?:""
+                        _enabled.value=true
+                    }
                 }
             }
         }
@@ -44,7 +50,9 @@ class ConfirmCodeViewModel @Inject constructor(private val interactor: Authoriza
         _enabled.value=false
     }
 
-    fun confirmCode(phone:String)=interactor.confirmCode(phone,code = code.value)
+    fun confirmCode(phone:String,type:String?)=interactor.confirmCode(phone,code = code.value,type?:"")
+
+    fun sendNewCode(phone:String,type:String?)=interactor.confirmNumber(phone, type?:"")
 
 
 }

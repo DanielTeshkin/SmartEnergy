@@ -5,6 +5,7 @@ import com.template.energysmart.data.local.LocalDataSource
 import com.template.energysmart.data.remote.RemoteDataSource
 import com.template.energysmart.data.remote.api.model.request.ConfirmCodeRequestData
 import com.template.energysmart.data.remote.api.model.request.ConfirmNumberRequestData
+import com.template.energysmart.data.remote.api.model.request.ResetPasswordRequestData
 import com.template.energysmart.data.remote.api.model.request.SignUpRequestData
 import com.template.energysmart.data.remote.api.model.response.*
 import kotlinx.coroutines.flow.flow
@@ -18,8 +19,21 @@ class UsersRepository @Inject constructor(private val remote: RemoteDataSource,p
         ) }
         emit(result)
     }
+    fun confirmNumberForReset(phone:String)= flow{
+        val result=handleOrDefault(ConfirmNumberResponseData()){remote.confirmNumberForReset(
+            ConfirmNumberRequestData(phone)
+        ) }
+        emit(result)
+    }
+
     fun confirmCode(phone: String,code:String) = flow {
         val result=handleOrDefault(ConfirmCodeResponseData()){remote.confirmCode(
+            ConfirmCodeRequestData(phone, code)
+        )}
+        emit(result)
+    }
+    fun confirmCodeReset(phone: String,code:String) = flow {
+        val result=handleOrDefault(ConfirmCodeResponseData()){remote.confirmCodeForReset(
             ConfirmCodeRequestData(phone, code)
         )}
         emit(result)
@@ -28,6 +42,11 @@ class UsersRepository @Inject constructor(private val remote: RemoteDataSource,p
         val result=handleOrDefault(AuthorizationData()){remote.registration(SignUpRequestData(username, password))}
         emit(result)
     }
+    fun resetPassword(username: String,password1:String,password2: String)= flow{
+        val result=handleOrDefault(Status()){remote.resetPassword(ResetPasswordRequestData(username, password1, password2))}
+        emit(result)
+    }
+    fun getToken()=local.getToken()
 
 
     fun login(username: String, password: String) = flow {

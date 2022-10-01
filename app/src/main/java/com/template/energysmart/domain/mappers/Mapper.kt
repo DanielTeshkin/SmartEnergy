@@ -97,7 +97,7 @@ class Mapper @Inject constructor() {
 
     fun mapNotification(code:Int): DataNotification {
         val text="Обрыв фазы"
-        val placeFirst="С города"
+        val placeFirst="города"
         val placeSecond="В доме"
         val low="Низкое напряжение"
         val high="Высокое напряжение"
@@ -106,6 +106,7 @@ class Mapper @Inject constructor() {
                 format = FormatNotification.SEND_COMMAND_NOTIFY,
                 title ="Внимание",
                 description = "С города выключили электрчество",
+                action="Запускаем генератор?",
                 image = ImageType.CITY_OFF
             )
             2-> DataNotification(
@@ -113,6 +114,7 @@ class Mapper @Inject constructor() {
                 title = "Ошибка запуска",
                 description = "Генератор не завелся,\n" +
                         "Неизвестная ошибка",
+                action="Попробуем ещё раз?",
                 image = ImageType.LAUNCH_ERROR_GENERATOR
             )
             3-> DataNotification(
@@ -502,7 +504,7 @@ class Mapper @Inject constructor() {
     }
 }
 fun dangerText(phase:String,place:String):String{
-    return "С $place нет $phase фазы"
+    return "C $place нет $phase фазы"
 }
 
 fun notifyText(phase: String,state:String):String{

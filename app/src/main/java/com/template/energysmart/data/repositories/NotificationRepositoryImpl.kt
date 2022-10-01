@@ -9,7 +9,10 @@ import javax.inject.Inject
 class NotificationRepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDataSource):BaseRepository(),NotificationsRepository{
 
    override suspend fun getNotificationList()= handleOrEmptyList { remoteDataSource.getNotifications() }
-   override suspend fun clickOnOk(id: String): Status =handleOrDefault(Status()){remoteDataSource.clickOnOk(id)}
+   override fun clickOnOk(id: String) =flow{
+     val result= handleOrDefault(Status()){remoteDataSource.clickOnOk(id)}
+      emit(result)
+   }
 
 
 }

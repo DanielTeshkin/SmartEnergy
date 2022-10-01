@@ -16,8 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CreatePasswordViewModel @Inject constructor(private val interactor: AuthorizationInteractor) :BaseViewModel() {
 
-        private val _navigation= MutableSharedFlow<Boolean>()
-        val navigation=_navigation.asSharedFlow()
+        private val _navigation= MutableStateFlow<Boolean>(false)
+        val navigation=_navigation.asStateFlow()
         private val _loading= MutableStateFlow(false)
         val loading=_loading.asStateFlow()
         private val _error= MutableStateFlow("")
@@ -26,24 +26,37 @@ class CreatePasswordViewModel @Inject constructor(private val interactor: Author
         val enabled=_enabled.asStateFlow()
         private val password= MutableStateFlow("")
 
+        private val passwordRepeat= MutableStateFlow("")
 
-        fun checkFieldsState(value:String){
-            _enabled.value = value.isNotEmpty()
+
+        fun updatePassword(value: String){
+            password.value=value
+            checkFieldsState()
+        }
+        fun updateRepeatPassword(value: String){
+            passwordRepeat.value=value
+            checkFieldsState()
+        }
+        fun checkFieldsState(){
+
+            _enabled.value = (password.value==passwordRepeat.value)
         }
     init {
-        interactor.scope=viewModelScope
-        start(viewModelScope) {
-            interactor.ui.collect {
-                when (it) {
-                    is ResponseState.Loading -> _loading.value=true
-                    is ResponseState.Success-> _navigation.emit(true)
-                    is ResponseState.Error->_error.value=it.throwable.message?:""
-                }
+        interactor.apply {
+            scope = viewModelScope
+            start(viewModelScope) {
+                subscribe(ui) {
+                    handleState(it, {_loading.value=it},{_navigation.value=true},{ _error.value = it ?: ""})
+            }
+                subscribe(status){ handleState(it, {_loading.value=it},{_navigation.value=true},{ _error.value = it ?: ""})
+        }
             }
         }
     }
     fun disableButton(){
         _enabled.value=false
     }
-    fun createPassword(phone:String,password:String)=interactor.createPassword(phone, password)
+    fun createPassword(phone:String)=interactor.createPassword(phone, password.value)
+
+    fun resetPassword(phone:String)=interactor.resetPassword(phone, password.value, passwordRepeat.value)
 }

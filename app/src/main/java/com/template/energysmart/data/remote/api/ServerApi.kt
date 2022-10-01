@@ -22,11 +22,22 @@ interface ServerApi {
     @POST("/api/confirm/create/")
     suspend fun confirmNumber(@Body request: ConfirmNumberRequestData): Response<ConfirmNumberResponseData>
 
+    @POST("/confirm_pass/create/")
+    suspend fun confirmNumberForReset(@Body request: ConfirmNumberRequestData): Response<ConfirmNumberResponseData>
+
     @POST("/api/confirm/confirmed/")
     suspend fun confirmCode(@Body request: ConfirmCodeRequestData): Response<ConfirmCodeResponseData>
 
+    @POST("api/confirm_pass/create/")
+    suspend fun confirmCodeForReset(@Body request: ConfirmCodeRequestData):Response<ConfirmCodeResponseData>
+
     @POST("/api/sign-up/")
     suspend fun registration(@Body request: SignUpRequestData): Response<AuthorizationData>
+
+    @POST("/api/sign-up/")
+    suspend fun resetPassword(@Body request: ResetPasswordRequestData): Response<Status>
+
+
 
     @GET("/api/devices/")
     suspend  fun getDevices():Response<List<Device>>
@@ -41,7 +52,7 @@ interface ServerApi {
     suspend  fun sendCommand(@Body commandRequest: CommandRequest):Response<Status>
 
     @POST("/api/devices/mode/")
-    suspend fun sendMode(@Body commandRequest: CommandRequest):Response<Status>
+    suspend fun sendMode(@Body modeRequest: ModeRequest):Response<Status>
 
     @GET("/api/metric/{id}/")
     suspend  fun getMetrics(@Path ("id") id:String):Response<Metric>

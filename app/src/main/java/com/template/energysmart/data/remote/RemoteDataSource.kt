@@ -59,11 +59,19 @@ class RemoteDataSource @Inject constructor(private val serverApi: ServerApi,cont
     suspend fun confirmNumber(request: ConfirmNumberRequestData): BaseApiResponse<ConfirmNumberResponseData> =
         processResponse { serverApi.confirmNumber(request) }
 
+    suspend fun confirmNumberForReset(request: ConfirmNumberRequestData): BaseApiResponse<ConfirmNumberResponseData>
+    = processResponse { serverApi.confirmNumberForReset(request) }
+
     suspend fun confirmCode(request: ConfirmCodeRequestData): BaseApiResponse<ConfirmCodeResponseData> =
         processResponse { serverApi.confirmCode(request) }
 
-     suspend fun registration(request: SignUpRequestData): BaseApiResponse<AuthorizationData> =
+    suspend fun confirmCodeForReset(request: ConfirmCodeRequestData):BaseApiResponse<ConfirmCodeResponseData>
+    = processResponse { serverApi.confirmCodeForReset(request) }
+
+    suspend fun registration(request: SignUpRequestData): BaseApiResponse<AuthorizationData> =
         processResponse { serverApi.registration(request) }
+    suspend fun resetPassword(request:ResetPasswordRequestData):BaseApiResponse<Status> =
+        processResponse { serverApi.resetPassword(request) }
 
 
      suspend fun getDevices(): BaseApiResponse<List<Device>> =processListResponse { serverApi.getDevices() }
@@ -75,8 +83,8 @@ class RemoteDataSource @Inject constructor(private val serverApi: ServerApi,cont
      suspend fun sendCommand(commandRequest: CommandRequest): BaseApiResponse<Status>  =
          processResponse { serverApi.sendCommand(commandRequest) }
 
-    suspend fun sendMode( commandRequest: CommandRequest):BaseApiResponse<Status> = processResponse {
-        serverApi.sendMode(commandRequest)
+    suspend fun sendMode( modeRequest: ModeRequest):BaseApiResponse<Status> = processResponse {
+        serverApi.sendMode(modeRequest)
     }
 
      suspend fun getMetrics(id: String): BaseApiResponse<Metric> =processResponse { serverApi.getMetrics(id) }

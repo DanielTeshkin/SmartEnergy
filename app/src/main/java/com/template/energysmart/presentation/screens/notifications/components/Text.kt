@@ -26,7 +26,7 @@ import com.template.energysmart.R
 import com.template.energysmart.presentation.theme.*
 @Composable
 
-fun textInBorder(){
+fun textInBorder(instruction: String?) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterHorizontally),
@@ -62,9 +62,7 @@ fun textInBorder(){
 
 
         Text(
-            text = "1. Нажмите красную кнопку    на щите АВР\n" +
-                    "2. Залейте топливо\n"+
-                    "3. Поверните красную кнопку \nпо часосой стрелке",
+            text = instruction!!,
             textAlign = TextAlign.Start,
             fontSize = 14.sp,
             textDecoration = TextDecoration.None,

@@ -16,5 +16,6 @@ interface DevicesRepository {
     fun bindDevice(data: BindDeviceData):Flow<Status>
     fun saveDevice(id:String)
    fun updateMode(command: Command):Flow<Status>
+   fun getSavedDevice():String
 
 }

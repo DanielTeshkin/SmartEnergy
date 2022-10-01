@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -25,9 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 import com.template.energysmart.R
+import com.template.energysmart.presentation.screens.main.MainViewEvent
+import com.template.energysmart.presentation.screens.main.MainViewModel
 
 @Composable
-fun drawNotificationsSmall(){
+fun drawNotificationsSmall(viewModel: MainViewModel, alertShow: AlertNotificationState) {
 
     Box(
 
@@ -44,14 +48,7 @@ fun drawNotificationsSmall(){
                     bottomEnd = 8.dp
                 )
             )
-            .background(
-                Color(
-                    red = 0.95686274766922f,
-                    green = 0.8588235378265381f,
-                    blue = 0.8745098114013672f,
-                    alpha = 1f
-                )
-            )
+            .background(alertShow.background)
 
             .padding(end = 16.dp)
 
@@ -74,21 +71,14 @@ fun drawNotificationsSmall(){
                 )
 
 
-                .background(
-                    Color(
-                        red = 0.8039215803146362f,
-                        green = 0.01568627543747425f,
-                        blue = 0.062745101749897f,
-                        alpha = 1f
-                    )
-                )
+                .background(alertShow.lineColor)
         )
 
-        Row() {
-            Image(painterResource(id = R.drawable.cancel_24px), contentDescription ="" ,Modifier.offset(x = 16.dp,y=10.dp))
+        Row {
+            Image(ImageVector.vectorResource(alertShow.imageClose), contentDescription ="" ,Modifier.offset(x = 16.dp,y=10.dp))
 
             Text(
-                text = "Обрыв фазы",
+                text = alertShow.title,
                 textAlign = TextAlign.Start,
                 fontSize = 14.sp,
                 textDecoration = TextDecoration.None,
@@ -96,7 +86,7 @@ fun drawNotificationsSmall(){
                 lineHeight = 20.sp,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
-                    .offset( y = 10.dp,x=20.dp)
+                    .offset(y = 10.dp, x = 20.dp)
                     //.height(20.dp)
 
                     .alpha(1f),
@@ -109,12 +99,17 @@ fun drawNotificationsSmall(){
                 fontWeight = FontWeight.Normal,
                 fontStyle = FontStyle.Normal,
             )
-            Image(painterResource(id = R.drawable.close), contentDescription ="" ,Modifier.offset(x = 182.dp,y=8.dp))
+            Image(ImageVector.vectorResource(R.drawable.ic_icon_1), contentDescription ="" ,
+                Modifier
+                    .offset(x = 180.dp, y = 8.dp)
+                    .clickable {
+                       viewModel.handleEvent(MainViewEvent.CloseAlertEvent(alertShow.id))
+                    })
         }
 
 
         Text(
-            text = "С города нет первой фазы",
+            text = alertShow.description,
             textAlign = TextAlign.Start,
             fontSize = 20.sp,
             textDecoration = TextDecoration.None,
@@ -139,5 +134,5 @@ fun drawNotificationsSmall(){
 @Composable
 @Preview
 fun testSmallSize(){
-    drawNotificationsSmall()
+
 }

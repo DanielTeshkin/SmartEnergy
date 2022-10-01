@@ -1,16 +1,24 @@
-package com.template.energysmart.presentation.screens
+package com.template.energysmart.presentation.screens.notifications
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -21,30 +29,38 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 
 import com.template.energysmart.R
+import com.template.energysmart.presentation.navigation.navigation
+import com.template.energysmart.presentation.screens.authorization.components.Loader
 import com.template.energysmart.presentation.screens.notifications.components.textInBorder
-import com.template.energysmart.presentation.theme.*
 
 @Composable
 
-fun drawNotificationsFullScreen(
-  color: Color,
-  image:Int,
-  imageButton:Int,
-  imageSecond:Int,
-  title:String,
-  text:String,
-  textColor: Color
+fun DrawNotificationsFullScreen( navController: NavController,viewModel: NotificationViewModel = hiltViewModel()){
+    Log.i("naf","naf")
+    LaunchedEffect(true ){
+        viewModel.mainNavigation.collect{
+               if(it)navController.navigate("main")
+        }
+    }
+    val state=  navController
+        .previousBackStackEntry?.savedStateHandle?.get<NotificationViewState>("state")?: NotificationViewState()
+    navController.currentBackStackEntry?.savedStateHandle?.set(
+        value = state,
+        key = "state"
+    )
+    Log.i("naf","naf")
+    val loading by viewModel.isShowDialog.collectAsState()
+    val error by viewModel.errorShow.collectAsState()
+    if (loading) Loader()
+    if (error.isNotEmpty()) Toast.makeText(LocalContext.current,error, Toast.LENGTH_LONG).show()
+    ConstraintLayout(
 
-){
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(54.dp, Alignment.Bottom),
         modifier = Modifier
-
-            .width(360.dp)
             .clip(
                 RoundedCornerShape(
                     topStart = 12.dp,
@@ -53,7 +69,7 @@ fun drawNotificationsFullScreen(
                     bottomEnd = 12.dp
                 )
             )
-            .background(color)
+            .background(state.theme!!.background)
             .border(
                 0.5.dp,
                 Color(red = 0f, green = 0f, blue = 0f, alpha = 0f),
@@ -67,12 +83,13 @@ fun drawNotificationsFullScreen(
             .padding(start = 16.dp, top = 176.dp, end = 16.dp, bottom = 50.dp)
 
             .alpha(1f)
+            .fillMaxSize()
 
 
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(45.dp, Alignment.Top),
+
             modifier = Modifier
 
                 .fillMaxWidth()
@@ -114,7 +131,7 @@ fun drawNotificationsFullScreen(
                     .alpha(1f)
 
 
-            ) { Image(painterResource(id = image),"") }
+            ) { Image(ImageVector.vectorResource(id = state.image?:R.drawable.ic_launch_error_automation), "") }
 
             Column(
                 horizontalAlignment = Alignment.Start,
@@ -133,17 +150,18 @@ fun drawNotificationsFullScreen(
                     )
                     .background(Color.Transparent)
 
-                    .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
+                    .padding(start = 0.dp, top = 50.dp, end = 0.dp, bottom = 0.dp)
 
                     .alpha(1f)
 
 
+
             ) {
 
-
+                Log.i("naf","nif")
                 Text(
 
-                    text = title,
+                    text = state.title,
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp,
                     textDecoration = TextDecoration.None,
@@ -157,14 +175,14 @@ fun drawNotificationsFullScreen(
                         //.height(23.dp)
 
                         .alpha(1f),
-                    color = textColor,
+                    color = state.theme!!.generalText,
                     fontWeight = FontWeight.Medium,
                     fontStyle = FontStyle.Normal,
                     )
 
 
                 Text(
-                    text = text,
+                    text = state.description,
                     textAlign = TextAlign.Center,
                     fontSize = 14.sp,
                     textDecoration = TextDecoration.None,
@@ -178,22 +196,23 @@ fun drawNotificationsFullScreen(
                         //.height(48.dp)
 
                         .alpha(1f),
-                    color =textColor,
+                    color =state.theme.generalText,
                     fontWeight = FontWeight.Normal,
                     fontStyle = FontStyle.Normal,
                 )
             }
+            if (state.instruction?.isNotEmpty() == true)
+                Box(Modifier.padding(top=20.dp)) {
+                    textInBorder(state.instruction)
+                }
         }
-        Box(Modifier.offset(y= (-25).dp)) {
-            textInBorder()
-        }
+
+        if (state.textMode!=null) TextMode(state.textMode)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(25.5.dp, Alignment.CenterVertically),
+
+
             modifier = Modifier
-
-                .width(196.dp)
-
                 .clip(
                     RoundedCornerShape(
                         topStart = 0.dp,
@@ -204,36 +223,38 @@ fun drawNotificationsFullScreen(
                 )
                 .background(Color.Transparent)
 
-                .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
+                .padding(top = 440.dp)
 
                 .alpha(1f)
-
+                .fillMaxWidth()
+                .height(160.dp)
 
         ) {
 
+            state.theme.buttonFirst?.let {   ImageVector.vectorResource(id = it) }?.let {
+                        Image(  it, contentDescription ="",Modifier.clickable(
+                            onClick = {
+                                viewModel.handleEvent(state.buttonFirstEvent?:NotificationsViewEvent.IgnoreNotificationEvent)
+                            }
+                        )
 
+                        )
+                    }
 
-
-
-
-
-
-
-                    Image(painter = painterResource(id = imageButton), contentDescription ="",Modifier.clickable(
-                        onClick = {}
-                    )
-
-                     )
-
-
-
-
-            Image(painter = painterResource(id = imageSecond), contentDescription ="",
+            Image(
+                ImageVector.vectorResource(id = state.theme.buttonSecond!!), contentDescription ="",
                 Modifier
                     .clickable(
-                        onClick = {}
+                        onClick = {
+                            viewModel.handleEvent(
+                                state.buttonSecondEvent
+                                    ?: NotificationsViewEvent.IgnoreNotificationEvent
+                            )
+
+                        }
                     )
-                    .offset(y = (-15).dp)
+                    .offset(y = 10.dp)
+
 
 
             )
@@ -247,16 +268,13 @@ fun drawNotificationsFullScreen(
 @Composable
 @Preview
 fun test(){
-    drawNotificationsFullScreen(
-        YellowLemon,R.drawable.ic_oil,R.drawable.error_button,R.drawable.cancel_error,"Внимание",
-        "Генератор не завелся,\n"
-                +"Низкий уровень масла", SimpleText)
+
 }
 
 @Composable
-fun TextMode(){
+fun TextMode(text:String){
     Text(
-        text = "Запускаем  генератор?",
+        text = text,
         textAlign = TextAlign.Center,
         fontSize = 14.sp,
         textDecoration = TextDecoration.None,
@@ -266,6 +284,7 @@ fun TextMode(){
         modifier = Modifier
 
             .fillMaxWidth()
+            .padding(top = 400.dp)
 
             //.height(16.dp)
 

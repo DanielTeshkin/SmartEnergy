@@ -27,9 +27,10 @@ class AuthorizationViewModel @Inject constructor(private val interactor: Authori
               val error=_error.asStateFlow()
     private val _enabled= MutableStateFlow(false)
     val enabled=_enabled.asStateFlow()
-    fun signIn(phone:String,password:String,context: Context){
-         interactor.signIn(phone, password, context)
-    }
+
+    fun signIn(phone:String,password:String)= interactor.signIn(phone, password)
+
+
   fun disableButton(){
       _enabled.value=false
   }
@@ -41,9 +42,18 @@ class AuthorizationViewModel @Inject constructor(private val interactor: Authori
        start(viewModelScope) {
            interactor.ui.collect {
                when (it) {
-                   is ResponseState.Loading -> _loading.value=true
+                   is ResponseState.Loading -> {
+                       _loading.value=it.isLoading
+                       when(it.isLoading){
+                           true->_enabled.value=false
+                           false -> _enabled.value=true
+                       }
+                   }
                    is ResponseState.Success-> _navigation.emit(true)
-                   is ResponseState.Error->_error.value=it.throwable.message?:""
+                   is ResponseState.Error->{
+                       _enabled.value=true
+                       _error.value=it.throwable.message?:""
+                   }
                }
            }
        }

@@ -109,7 +109,7 @@ fun StartScreen(navHostController: NavHostController = rememberNavController()){
                 Button(
                     onClick = {
 
-                        navHostController.navigate("confirm_number")
+                        navHostController.navigate("confirm_number_reset")
                     }, modifier = Modifier
                         .width(335.dp)
                         .height(50.dp), colors = ButtonDefaults.buttonColors(
