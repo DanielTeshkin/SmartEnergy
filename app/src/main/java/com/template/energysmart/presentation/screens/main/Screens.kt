@@ -49,7 +49,7 @@ fun ModeControlButton(viewModel: MainViewModel, state: State<MainViewState>){
         .background(Color.Transparent)
 
         ) {
-        Log.i("go","gond")
+
         val autoState =state.value.autoButtonIsEnabled
         val buttonAutoActive = remember {
             mutableStateOf(state.value.autoButton)
