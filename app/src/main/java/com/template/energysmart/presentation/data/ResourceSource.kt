@@ -1,11 +1,13 @@
 package com.template.energysmart.presentation.data
 
+import androidx.compose.ui.graphics.Color
 import com.template.energysmart.R
 import com.template.energysmart.data.remote.api.model.request.Command
-import com.template.energysmart.domain.model.Mode
-import com.template.energysmart.domain.model.PhasesStateModel
-import com.template.energysmart.domain.model.PowerSource
-import com.template.energysmart.domain.model.SystemState
+import com.template.energysmart.domain.model.*
+import com.template.energysmart.presentation.theme.ErrorText
+import com.template.energysmart.presentation.theme.Gray
+import com.template.energysmart.presentation.theme.GreenEclipse
+import com.template.energysmart.presentation.theme.Orange
 
 class ResourceSource {
     val home= mutableMapOf(SystemState.DISABLED to R.drawable.ic__home_gray,
@@ -23,9 +25,27 @@ class ResourceSource {
         SystemState.WARNING to R.drawable.generator_yellow,
         SystemState.CRITICAL to R.drawable.generator_red
     )
+
+    val  batteryImage= mutableMapOf(
+        BatteryState.HALF to R.drawable.ic_half_battery,
+        BatteryState.THREE to R.drawable.ic_three_battery,
+        BatteryState.FULL to R.drawable.ic_full_battery,
+        BatteryState.SINGLE to R.drawable.ic_single_battery
+    )
+    val oilImage= mutableMapOf(OilState.WARNING to R.drawable.ic_oil_yellow,
+       OilState.CRITICAL to R.drawable.ic_oil_redd,
+        OilState.OK to R.drawable.ic_vector
+        )
+    val modeButtons= mutableMapOf(Mode.AUTO to Pair(R.drawable.auto_button,R.drawable.hand_button_gray),
+        Mode.MANUAL to Pair(R.drawable.auto_button_gray,R.drawable.hand_button_green))
     val auto = mutableMapOf(Mode.AUTO to R.drawable.auto_button,Mode.MANUAL to R.drawable.auto_button_gray)
     val handle= mutableMapOf(Mode.AUTO to R.drawable.hand_button_green,Mode.MANUAL to R.drawable.hand_button_gray)
-    val actualCommand = mutableMapOf(PowerSource.GENERATOR to R.drawable.ic_stop_test,PowerSource.NETWORK to R.drawable.ic_start_test)
+    val actualCommand = mutableMapOf(ButtonState.RED to R.drawable.ic_stop_test,
+       ButtonState.GREEN to R.drawable.ic_start_test,ButtonState.GRAY to R.drawable.is_start_gray)
+    val eclipse= mutableMapOf(SystemState.STABLE to GreenEclipse,SystemState.WARNING to Orange,
+        SystemState.CRITICAL to ErrorText,
+        SystemState.DISABLED to Color.Transparent
+    )
     val stateGenerator= mutableMapOf(mapOf(Pair(Mode.AUTO,Command.START)) to R.drawable.start_test)
     val pointNetworkState= mutableMapOf(SystemState.CRITICAL to R.drawable.point_network_red,
         SystemState.DISABLED to R.drawable.point_network_gray,

@@ -2,6 +2,9 @@ package com.template.energysmart.domain
 
 import com.template.energysmart.data.remote.api.model.request.Command
 import com.template.energysmart.data.remote.api.model.request.ParameterRequest
+import com.template.energysmart.data.remote.api.model.response.Device
+import com.template.energysmart.data.remote.api.model.response.Metric
+import com.template.energysmart.data.remote.api.model.response.Parameter
 import com.template.energysmart.domain.mappers.Mapper
 import com.template.energysmart.domain.model.DeviceState
 import com.template.energysmart.domain.model.EnergyControlModel
@@ -22,7 +25,12 @@ class GeneratorUseCase @Inject constructor(private val devicesRepository: Device
 
    fun sendCommand(command: Command)= devicesRepository.sendCommand(command)
     fun updateMode(command: Command)=devicesRepository.updateMode(command)
+    fun resetOdo(command: Command)=devicesRepository.resetOdo(command)
     fun closeAlert(id:String)=notificationsRepository.clickOnOk(id)
+    fun getDevice()=flow{
+        val result= devicesRepository.getDevice()
+        emit(result)
+    }
 
     private suspend fun notificationMap()=
         notificationsRepository.getNotificationList().map {
@@ -37,6 +45,7 @@ class GeneratorUseCase @Inject constructor(private val devicesRepository: Device
 
     fun invoke()= flow {
         val result=settingsRepository.getParameter()
+
         val device=devicesRepository.getDevice()
         val notifications=notificationMap()
         if(notifications.isNotEmpty()) {

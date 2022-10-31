@@ -343,9 +343,9 @@ fun OutlineCustom(navController: NavController, viewModel: AuthorizationViewMode
 
             )
 
-            TextButton(onClick = { navController.navigate("") },  modifier = Modifier
+            TextButton(onClick = { navController.navigate("confirm_number_reset") },  modifier = Modifier
 
-                .offset(y = buttonDp + 5.dp)
+                .offset(y = buttonDp-2.dp)
                 //.height(17.dp)
 
                 .alpha(1f)) {

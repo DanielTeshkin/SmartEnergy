@@ -3,10 +3,8 @@ package com.template.energysmart.data.repositories
 import android.content.Context
 import com.template.energysmart.data.local.LocalDataSource
 import com.template.energysmart.data.remote.RemoteDataSource
-import com.template.energysmart.data.remote.api.model.request.ConfirmCodeRequestData
-import com.template.energysmart.data.remote.api.model.request.ConfirmNumberRequestData
-import com.template.energysmart.data.remote.api.model.request.ResetPasswordRequestData
-import com.template.energysmart.data.remote.api.model.request.SignUpRequestData
+import com.template.energysmart.data.remote.api.base.BaseApiResponse
+import com.template.energysmart.data.remote.api.model.request.*
 import com.template.energysmart.data.remote.api.model.response.*
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -52,6 +50,11 @@ class UsersRepository @Inject constructor(private val remote: RemoteDataSource,p
     fun login(username: String, password: String) = flow {
         val result =
             handleOrDefault(AuthorizationData()) { remote.authorization(username, password) }
+        emit(result)
+    }
+
+    fun userInfoUpdate(request:UserInfoRequest)=  flow {
+        val result = handle { remote.updateInfo(request) }
         emit(result)
     }
 

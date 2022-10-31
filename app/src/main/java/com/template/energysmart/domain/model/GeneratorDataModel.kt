@@ -12,7 +12,11 @@ data class EnergyControlModel(
     val generalState:GeneralState= GeneralState(),
     val power_source:PowerSource=PowerSource.NETWORK,
     val mode:Mode=Mode.AUTO,
+    val buttonState: ButtonState=ButtonState.GRAY,
     val eco_control:EcoControl?=null,
+    val temperatureState: TemperatureState,
+    val oilState: OilState,
+    val batteryState: BatteryState
 
     )
 
@@ -22,9 +26,9 @@ data class GeneralState(
     val energy_supply_home:SystemState=SystemState.STABLE,
     val city_network:SystemState=SystemState.DISABLED,
     val generator_state:SystemState=SystemState.STABLE,
+    val eclipseState:SystemState=SystemState.DISABLED,
 )
 data class PhasesStateModel(
-
     val phase_state_1: SystemState=SystemState.DISABLED,
     val phase_state_2:SystemState=SystemState.DISABLED,
     val phase_state_3:SystemState=SystemState.DISABLED
@@ -48,11 +52,30 @@ enum class SystemState {
 }
 enum class PowerSource{
     NETWORK,
-    GENERATOR
+    GENERATOR,
+    NOTHING
 }
 enum class Mode{
     AUTO,
     MANUAL
 }
+enum class ButtonState{
+    GRAY,
+    GREEN,
+    RED
+}
 
-
+enum class OilState{
+    OK,
+    WARNING,
+    CRITICAL
+}
+enum class BatteryState{
+    FULL,
+    THREE,
+    HALF,
+    SINGLE
+}
+enum class TemperatureState{
+    PLUS,MINUS
+}

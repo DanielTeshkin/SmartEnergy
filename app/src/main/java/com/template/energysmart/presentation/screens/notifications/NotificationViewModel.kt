@@ -33,7 +33,9 @@ class NotificationViewModel @Inject constructor (private val interactor:Notifica
         }
     }
 
-
+   fun changeStatus(){
+       _instructionNavigation.value=false
+   }
 
     fun handleEvent(event:NotificationsViewEvent){
         when(event){

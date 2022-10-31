@@ -1,5 +1,6 @@
 package com.template.energysmart.domain.mappers
 
+import android.util.Log
 import com.template.energysmart.data.remote.api.model.response.Device
 import com.template.energysmart.data.remote.api.model.response.Metric
 import com.template.energysmart.data.remote.api.model.response.Parameter
@@ -10,45 +11,80 @@ import javax.inject.Inject
 class Mapper @Inject constructor() {
 
     fun map(model: Metric, parameter: Parameter, device: Device): EnergyControlModel {
-        val source=device.command
-        val systemStateController=SystemStateController(model.input1,model.input2,model.input3,model.gin.toInt(),
-            source, phaseControl = if(parameter.phasescount) 0 else parameter.phasecontrol
-            )
+        val systemStateController=
+            SystemStateController(model.input1.toInt(),
+                model.input2.toInt(),
+                model.input3.toInt(),
+                model.gpul,
+                model.gin.toInt(),
+                phaseControl = if(parameter.phasescount) 0 else parameter.phasecontrol,model.sw.toInt())
 
+        val timeToChangeOil=model.toil/3600
 
-           val metrics= if(source=="STOP")
-               GeneralMetric(voltage_1 =model.input1,
-               voltage_2 = model.input2,
-               voltage_3 = model.input3,
-               temperature = model.temperature_air,
-               oil_level = model.fuel,
-               time_to_change_oil = model.toil,
-               time_work_timer = model.ttb
-           ) else  GeneralMetric(voltage_1 =model.gin.toInt(),
-               voltage_2 = model.gin.toInt(),
+        Log.i("q",timeToChangeOil.toString())
+
+        val metrics= when(model.sw.toInt()) {
+               1 -> GeneralMetric(
+                   voltage_1 = model.input1.toInt(),
+                   voltage_2 = model.input2.toInt(),
+                   voltage_3 = model.input3.toInt(),
+                   temperature = model.temperature_air.toInt(),
+                   oil_level = model.fuel.toString(),
+                   time_to_change_oil =timeToChangeOil.toString(),
+                   time_work_timer = (model.ttb/3600000).toString()
+               )
+               2 -> GeneralMetric(voltage_1 = model.gin.toInt(),
+                   voltage_2
+                   = model.gin.toInt()
+                   ,
                voltage_3 = model.gin.toInt(),
-               temperature = model.temperature_air,
-               oil_level = model.fuel,
-               time_to_change_oil = model.toil,
-               time_work_timer = model.ttb)
+               temperature = model.temperature_air.toInt(),
+               oil_level = model.fuel.toString(),
+               time_to_change_oil = timeToChangeOil.toString(),
+               time_work_timer = (model.ttb/3600000).toString())
+               else ->  GeneralMetric(voltage_1 =0, voltage_2 =0, voltage_3 =0, temperature = model.temperature_air.toInt(),
+                   oil_level = model.fuel.toString(),
+                   time_to_change_oil = model.toil.toString(),
+                   time_work_timer = model.ttb.toString())
+           }
         val generalState=systemStateController.getGeneralState()
+        val buttonState=if(model.bs.toInt()==1) ButtonState.GRAY else checkButtonState(model, device)
+        val oilState=if(timeToChangeOil>10)OilState.OK else if(timeToChangeOil in 0..10) OilState.WARNING else OilState.CRITICAL
+        val temperatureState=if(model.temperature_air.toInt()<0)TemperatureState.MINUS else TemperatureState.PLUS
+        val batteryState= when {
+            model.rssi>-65.0 -> BatteryState.FULL
+            model.rssi in -65.00..-75.00 -> BatteryState.THREE
+            model.rssi in -75.00..-85.00 -> BatteryState.HALF
+            else -> BatteryState.SINGLE
+        }
+
         return EnergyControlModel(
             generalState = generalState,
             metric = metrics,
-
             eco_control = if(device.mode=="AUTO")   EcoControl(
                 time_pause = parameter.pause_before_starting_the_generator,
                 time_stop = parameter.downtime,
                 time_work = parameter.eco_generator_run_time
             ) else null,
-            power_source =if(source=="START") PowerSource.GENERATOR
-            else PowerSource.NETWORK
+            power_source =when(model.sw.toInt()) {
+                1-> PowerSource.NETWORK
+                2-> PowerSource.GENERATOR
+                else ->PowerSource.NOTHING
+            }
             ,
             mode = Mode.valueOf(device.mode),
+            buttonState = buttonState,
+            oilState = oilState,
+            temperatureState = temperatureState,
+            batteryState = batteryState
 
         )
+    }
 
-
+    private fun checkButtonState(model: Metric,device: Device)=when(model.state){
+        0-> if(device.mode=="AUTO")  ButtonState.GRAY else ButtonState.GREEN
+        1-> ButtonState.RED
+        else->ButtonState.GRAY
     }
 
     fun mapParameter(parameter: Parameter)= SettingsModel(
@@ -97,7 +133,7 @@ class Mapper @Inject constructor() {
 
     fun mapNotification(code:Int): DataNotification {
         val text="Обрыв фазы"
-        val placeFirst="города"
+        val placeFirst="C города"
         val placeSecond="В доме"
         val low="Низкое напряжение"
         val high="Высокое напряжение"
@@ -504,7 +540,7 @@ class Mapper @Inject constructor() {
     }
 }
 fun dangerText(phase:String,place:String):String{
-    return "C $place нет $phase фазы"
+    return "$place нет $phase фазы"
 }
 
 fun notifyText(phase: String,state:String):String{

@@ -7,8 +7,9 @@ class SystemStateController(private val voltage1:Int,
                             private val voltage2:Int,
                             private val voltage3:Int,
                             private val voltageGenerator:Int,
-                            private val source:String,
-                            private val phaseControl: Int
+                            private val voltage:Int,
+                            private val phaseControl: Int,
+                            private val source:Int
                             ) {
 
 
@@ -17,7 +18,8 @@ class SystemStateController(private val voltage1:Int,
         energy_supply_home = getHomeState(),
         city_network = getNetworkState(),
         generator_state = getGeneratorState(),
-        phasesNetworkState = getNetworkPhase()
+        phasesNetworkState = getNetworkPhase(),
+        eclipseState = getEclipseState()
     )
      private fun getNetworkPhase()=PhasesStateModel(
          phase_state_1 =checkedState(voltage1),
@@ -25,18 +27,20 @@ class SystemStateController(private val voltage1:Int,
          phase_state_3 = checkedState(voltage3)
      )
    private fun getPhasesState()= when(source) {
-      "STOP"-> getNetworkPhase()
-       "START"-> {
-           val state=getGeneratorState()
-           PhasesStateModel(state,state,state)
-       }
-       else ->getNetworkPhase()
+      1-> getNetworkPhase()
+       2-> { PhasesStateModel(getGeneratorState(),getGeneratorState(),getGeneratorState()) }
+       else -> PhasesStateModel()
    }
 
+    private fun getEclipseState()=when(voltageGenerator){
+        in 0..17 -> if(source==2)SystemState.CRITICAL else SystemState.DISABLED
+        else -> if(source==2)SystemState.STABLE else SystemState.DISABLED
+    }
+
     private fun getHomeState() = when(source){
-        "START"->getGeneratorState()
-        "STOP"->getNetworkState()
-        else ->getNetworkState()
+        1->getNetworkState()
+        2->getGeneratorState()
+        else ->SystemState.DISABLED
     }
     private fun checkedState(voltage:Int):SystemState =
         when(voltage){
@@ -44,6 +48,7 @@ class SystemStateController(private val voltage1:Int,
             in 101..170->SystemState.CRITICAL
             in 171..200->SystemState.WARNING
             in 201..240->SystemState.STABLE
+            in 240..250->SystemState.WARNING
             else -> SystemState.CRITICAL
         }
 
@@ -67,6 +72,6 @@ class SystemStateController(private val voltage1:Int,
        }
     }
 
-    private fun getGeneratorState()=checkedState(voltageGenerator)
+    private fun getGeneratorState()=checkedState(voltage)
 
 }

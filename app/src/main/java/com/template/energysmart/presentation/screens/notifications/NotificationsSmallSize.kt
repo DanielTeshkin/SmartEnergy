@@ -74,7 +74,7 @@ fun drawNotificationsSmall(viewModel: MainViewModel, alertShow: AlertNotificatio
                 .background(alertShow.lineColor)
         )
 
-        Row {
+        Box(Modifier.fillMaxHeight()) {
             Image(ImageVector.vectorResource(alertShow.imageClose), contentDescription ="" ,Modifier.offset(x = 16.dp,y=10.dp))
 
             Text(
@@ -86,7 +86,7 @@ fun drawNotificationsSmall(viewModel: MainViewModel, alertShow: AlertNotificatio
                 lineHeight = 20.sp,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
-                    .offset(y = 10.dp, x = 20.dp)
+                    .offset(y = 10.dp, x = 50.dp)
                     //.height(20.dp)
 
                     .alpha(1f),
@@ -101,7 +101,8 @@ fun drawNotificationsSmall(viewModel: MainViewModel, alertShow: AlertNotificatio
             )
             Image(ImageVector.vectorResource(R.drawable.ic_icon_1), contentDescription ="" ,
                 Modifier
-                    .offset(x = 180.dp, y = 8.dp)
+                    .offset( y = 12.dp,x=150.dp)
+                    .align(Alignment.TopEnd)
                     .clickable {
                        viewModel.handleEvent(MainViewEvent.CloseAlertEvent(alertShow.id))
                     })

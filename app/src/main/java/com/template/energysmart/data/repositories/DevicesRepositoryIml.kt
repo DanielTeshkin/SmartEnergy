@@ -29,6 +29,10 @@ class DevicesRepositoryIml @Inject constructor(private val remote: RemoteDataSou
           emit(result)
    }
 
+    override fun resetOdo(command: Command)=flow {
+        val result=handleOrDefault(Status()) { remote.resetOdo(CommandRequest(local.getDeviceId(), command)) }
+        emit(result)
+    }
 
 
     override fun bindDevice(data: BindDeviceData)=flow{

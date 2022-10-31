@@ -1,4 +1,5 @@
 package com.template.energysmart.presentation.screens.settings.components
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,7 +13,6 @@ import androidx.compose.ui.draw.scale
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.smarttoolfactory.slider.ColorfulSlider
 import com.smarttoolfactory.slider.MaterialSliderDefaults
@@ -44,12 +45,13 @@ fun SliderParameter(
     range: IntRange,
     title:String,
     prefix: String,
-    mean:Int,
+    mean: Int,
+    enabled: Boolean,
     viewModel: SettingsViewModel,
     parameterValueType: ParameterValueType,
     TitleDraw:@Composable (String)->Unit,
 
-){
+    ){
 
     Column(
         Modifier
@@ -65,8 +67,9 @@ fun SliderParameter(
        }
 
         Row {
-            val sliderPosition=remember{ mutableStateOf(sliderState(range,mean.toString()))}
-            val text= remember{ mutableStateOf(mean.toString())}
+
+            val positionSlider = remember{ mutableStateOf(0f)}
+            Log.i("sliderT",positionSlider.toString())
 
             Box(Modifier.width(240 .dp)) {
                 ColorfulSlider(
@@ -74,8 +77,9 @@ fun SliderParameter(
                     thumbRadius = 15.dp,
                     trackHeight = 20.dp,
                     onValueChange = { it ->
+                       positionSlider.value=it
 
-                             viewModel.handleEvent(SettingsViewEvent.ValueChangerEvent(
+                        viewModel.handleEvent(SettingsViewEvent.ValueChangerEvent(
                                  textFieldState(range,it),parameterValueType))
                                     },
                     colors = MaterialSliderDefaults.materialColors(
@@ -132,17 +136,13 @@ fun SliderParameter(
     } }
 
 
-@Composable
 
-fun Test(){
-    SliderParameter(range = 0..600, title = "Время до запуска", prefix ="c" ,123,viewModel= hiltViewModel(),ParameterValueType.TIME_STOP){
-            TitleSliderMedium(text = it)
-    }
-}
+
+
 
 @Composable
-fun PanelPhaseControl(enabled:Boolean=false,viewModel: SettingsViewModel
-){
+fun PanelPhaseControl(
+    enabled: Boolean = false, viewModel: SettingsViewModel, value: Int){
     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()){
         Text(
             text = "Контроль по фазе",
@@ -185,37 +185,23 @@ fun PanelPhaseControl(enabled:Boolean=false,viewModel: SettingsViewModel
         )
         else
             Box(Modifier.offset(y= (-10).dp)) {
-                PanelPhase(viewModel)
+                PanelPhase(viewModel,value)
             }
 
 
     }
 }
 @Composable
-fun PanelPhase(viewModel: SettingsViewModel) {
-    var checked_first by remember{ mutableStateOf(true)}
-    var image_first by remember {
-        mutableStateOf(R.drawable.round_green)
-    }
-    var checked_second by remember{ mutableStateOf(false)}
-    var image_second by remember {
-        mutableStateOf(R.drawable.ic_group_16)
-    }
-    var checked_third by remember{ mutableStateOf(false)}
-    var image_third by remember {
-        mutableStateOf(R.drawable.ic_group_16)
-    }
+fun PanelPhase(viewModel: SettingsViewModel, value: Int) {
+    var checked_first = value==1
+    var image_first =if (value==1) R.drawable.round_green else R.drawable.ic_group_16
+    var checked_second = value==2
+    var image_second =if (value==2) R.drawable.round_green else R.drawable.ic_group_16
+    var checked_third =value==3
+    var image_third =if (value==3) R.drawable.round_green else R.drawable.ic_group_16
     Row {
         IconToggleButton(checked = checked_first, onCheckedChange ={
-            checked_first=it
-            if(it){
-                image_first=R.drawable.round_green
-                image_third=R.drawable.ic_group_16
-                image_second=R.drawable.ic_group_16
-                checked_second=false
-                checked_third=false
-            }
-            else image_first=R.drawable.ic_group_16
+
             viewModel.handleEvent(SettingsViewEvent.СhoicePhaseEvent(it,1))
 
         } ) {
@@ -227,16 +213,7 @@ fun PanelPhase(viewModel: SettingsViewModel) {
                  }
         }
         IconToggleButton(checked = checked_second, onCheckedChange ={
-            checked_second=it
-            if(it) {
-                image_second=R.drawable.round_green
-                image_first=R.drawable.ic_group_16
-                image_third=R.drawable.ic_group_16
-                checked_first=false
-                checked_third=false
 
-            }
-            else image_second=R.drawable.ic_group_16
             viewModel.handleEvent(SettingsViewEvent.СhoicePhaseEvent(it,2))
 
         } ) {
@@ -248,15 +225,7 @@ fun PanelPhase(viewModel: SettingsViewModel) {
             }
         }
         IconToggleButton(checked = checked_third, onCheckedChange ={
-            checked_third=it
-            if(it){
-                image_third=R.drawable.round_green
-                image_first=R.drawable.ic_group_16
-                image_second=R.drawable.ic_group_16
-                checked_second=false
-                checked_first=false
-            }
-            else image_third=R.drawable.ic_group_16
+
             viewModel.handleEvent(SettingsViewEvent.СhoicePhaseEvent(it,2))
 
         } ) {
@@ -302,21 +271,18 @@ fun TextPhase(number:String){
 @Composable
 fun SwitchWindow(state:Boolean,viewModel: SettingsViewModel,parameterType: ParameterType){
     Row{
-        val textState = remember { mutableStateOf(
-            when(state){
+        val textState = when(state){
             true->"ON"
             false->"OFF" }
-        )
-        }
-        val offsetState = remember{ mutableStateOf(
-            when(state) {
-               true-> 15.dp
+
+
+        val offsetState = when(state) {true-> 15.dp
                 false->52.dp
             }
-        )}
-        val switchState= remember { mutableStateOf(state)}
+
+
         Text(
-            text =textState.value ,
+            text =textState ,
             textAlign = TextAlign.Justify,
             fontSize = 10.sp,
             textDecoration = TextDecoration.None,
@@ -325,7 +291,7 @@ fun SwitchWindow(state:Boolean,viewModel: SettingsViewModel,parameterType: Param
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 //.height(16.dp)
-                .offset(x = offsetState.value, y = 17.dp)
+                .offset(x = offsetState, y = 17.dp)
                 .alpha(1f),
             color = Color(red = 0.37109375f, green = 0.37109375f, blue = 0.37109375f, alpha = 1f),
             fontWeight = FontWeight.Bold,
@@ -333,17 +299,7 @@ fun SwitchWindow(state:Boolean,viewModel: SettingsViewModel,parameterType: Param
         )
 
         Switch(
-            checked =switchState.value , onCheckedChange = {
-                switchState.value=it
-                when(it){
-                    true->{textState.value="ON"
-                        offsetState.value=15.dp
-                    }
-                    false->{
-                        textState.value="OFF"
-                        offsetState.value=52.dp
-                    }
-                }
+            checked =state , onCheckedChange = {
                 viewModel.handleEvent(SettingsViewEvent.SwitchStateChangeEvent(it,parameterType))
                 },
             Modifier.scale(2f),

@@ -16,5 +16,7 @@ enum class Command {
     START,
     STOP,
     AUTO,
-    MANUAL
+    MANUAL,
+    COMMON,
+    OIL
 }

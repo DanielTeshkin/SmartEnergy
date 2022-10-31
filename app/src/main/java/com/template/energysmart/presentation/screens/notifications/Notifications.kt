@@ -37,16 +37,23 @@ import com.template.energysmart.R
 import com.template.energysmart.presentation.navigation.navigation
 import com.template.energysmart.presentation.screens.authorization.components.Loader
 import com.template.energysmart.presentation.screens.notifications.components.textInBorder
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 
 fun DrawNotificationsFullScreen( navController: NavController,viewModel: NotificationViewModel = hiltViewModel()){
     Log.i("naf","naf")
-    LaunchedEffect(true ){
-        viewModel.mainNavigation.collect{
-               if(it)navController.navigate("main")
-        }
+    LaunchedEffect(true ){ viewModel.mainNavigation.collect { if (it) navController.navigate("main") } }
+
+    val instructionFlag= viewModel.instruction.collectAsState()
+    if (instructionFlag.value){
+        viewModel.changeStatus()
+        navController.navigate("instruction")
+
     }
+
+
     val state=  navController
         .previousBackStackEntry?.savedStateHandle?.get<NotificationViewState>("state")?: NotificationViewState()
     navController.currentBackStackEntry?.savedStateHandle?.set(

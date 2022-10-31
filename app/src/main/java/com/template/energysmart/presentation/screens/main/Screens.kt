@@ -33,6 +33,8 @@ import androidx.navigation.compose.rememberNavController
 import com.template.energysmart.R
 import com.template.energysmart.domain.model.FormatNotification
 import com.template.energysmart.domain.model.ImageType
+import com.template.energysmart.domain.model.PowerSource
+import com.template.energysmart.presentation.base.Loader
 import com.template.energysmart.presentation.data.NotificationsResource
 import com.template.energysmart.presentation.screens.main.components.Temperature
 import com.template.energysmart.presentation.screens.main.components.drawParameterGeneratorText
@@ -43,60 +45,32 @@ import com.template.energysmart.presentation.theme.*
 
 
 @Composable
-fun ModeControlButton(viewModel: MainViewModel, state: State<MainViewState>){
+fun ModeControlButton(viewModel: MainViewModel){
+    val autoModeImage=viewModel.uiController.autoModeImage.collectAsState()
+    val handModeImage=viewModel.uiController.handModeImage.collectAsState()
+
     Row(modifier = Modifier
 
         .background(Color.Transparent)
 
         ) {
 
-        val autoState =state.value.autoButtonIsEnabled
-        val buttonAutoActive = remember {
-            mutableStateOf(state.value.autoButton)
-        }
-        val buttonHandActive = remember {
-            mutableStateOf(state.value.manualButton)
-        }
-        val handle = remember { mutableStateOf(state.value.handButtonIsEnabled) }
-        IconToggleButton(checked = autoState, onCheckedChange = {
-            when (it) {
-                true -> {
-                    viewModel.handleEvent(MainViewEvent.AutoModeEvent)
-                    buttonAutoActive.value = R.drawable.auto_button
-                    buttonHandActive.value = R.drawable.hand_button_gray
-                    handle.value = false
-                }
-                false -> {
-                    viewModel.handleEvent(MainViewEvent.ManualModeEvent)
-                    buttonAutoActive.value = R.drawable.auto_button_gray
-                    buttonHandActive.value = R.drawable.hand_button_green
-                    handle.value = false
-                }
-            }
-        }) {
+        val autoState = viewModel.uiController.autoButtonIsEnabled.collectAsState()
+
+        val handle = viewModel.uiController.handButtonIsEnabled.collectAsState()
+        IconToggleButton(checked = !autoState.value, onCheckedChange = {viewModel.handleEvent(MainViewEvent.ModeEvent)}, enabled = autoState.value) {
             Image(
-             ImageVector.vectorResource(id = state.value.autoButton),
+             ImageVector.vectorResource(id = autoModeImage.value),
                 contentDescription = ""
             )
         }
 
-        IconToggleButton(checked = handle.value, onCheckedChange = {
-            handle.value = it
-            when (it) {
-                true -> {
-                    viewModel.handleEvent(MainViewEvent.ManualModeEvent)
-
-                }
-                false -> {
-                    viewModel.handleEvent(MainViewEvent.AutoModeEvent)
-
-                }
-            }
-        }) {
+        IconToggleButton(checked = !handle.value, onCheckedChange = {viewModel.handleEvent(MainViewEvent.ModeEvent) },
+            enabled = handle.value) {
 
 
             Image(
-              ImageVector.vectorResource(buttonHandActive.value),
+              ImageVector.vectorResource(handModeImage.value),
                 contentDescription = "",
             )
         }
@@ -113,9 +87,7 @@ fun FirstBlock(viewModel: MainViewModel, state: State<MainViewState>) {
             .fillMaxWidth()
             .height(250.dp)
 
-
-
-        ) {
+    ) {
         Column(
             Modifier
                 .align(Alignment.TopStart)
@@ -174,10 +146,8 @@ fun FirstBlock(viewModel: MainViewModel, state: State<MainViewState>) {
                 modifier = Modifier.padding( top = 7.dp)
                 ) {
                  Box(Modifier.padding(start = 31.dp)) {
-                     when(state.value.commandButtonIsEnabled){
-                         true -> TestPhaseNetwork(state)
-                         false -> TestPhaseGenerator(state = state)
-                     }
+                     if (state.value.source==PowerSource.NETWORK) TestPhaseNetwork(state)
+                     else if(state.value.source==PowerSource.GENERATOR) TestPhaseGenerator(state = state)
 
                  }
                 Box(
@@ -272,6 +242,7 @@ fun FirstBlock(viewModel: MainViewModel, state: State<MainViewState>) {
                 content =
                 {
                     item {
+                        if(state.value.cold)
                         Image(
                             ImageVector.vectorResource(id = R.drawable.frozen),
                             contentDescription = "",
@@ -283,7 +254,7 @@ fun FirstBlock(viewModel: MainViewModel, state: State<MainViewState>) {
                     }
                     item {
                         Image(
-                            ImageVector.vectorResource(id = R.drawable.sv),
+                            ImageVector.vectorResource(id = state.value.batteryImage),
                             contentDescription = "",
                             Modifier.offset(y = 6.dp, x = 25.dp)
                         )
@@ -350,14 +321,15 @@ Box(
             //.height(1.dp)
     )
 
-    Rectangle()
+           Rectangle(state.value.eclipseColor)
+    Log.i("go","top")
         Column {
             val image=state.value.commandButtonImage
             Box(Modifier.padding(start = 33.dp, end = 33.dp, top = 40.dp)) {
                 GeneratorBlock(state)
             }
             Box(modifier = Modifier.padding(start = 49.dp, end = 52.dp, top = 40.dp)) {
-                CommandAndNavigationPanel(navController,viewModel,image,state.value.commandButtonIsEnabled)
+                CommandAndNavigationPanel(navController,viewModel)
             }
         }
 
@@ -370,20 +342,19 @@ Box(
 
 @Composable
 fun GeneratorBlock(state: State<MainViewState>) {
-
+    Log.i("go","trop")
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
 
     ) {
-        Log.i("go","dddf")
         Image(
             imageVector = ImageVector.vectorResource(state.value.generatorImage),
             contentDescription = "",
 
             )
-        Row {
+        Row(Modifier.offset(x= 10.dp)) {
             Image(
                 imageVector = ImageVector.vectorResource(R.drawable.line),
                 contentDescription = ""
@@ -407,17 +378,20 @@ fun GeneratorBlock(state: State<MainViewState>) {
                     )
                     drawParameterGeneratorText(meanParameter = state.value.timeText)
                 }
-                Row(modifier = Modifier.padding(top = 14.dp)) {
+                Row(modifier = Modifier.padding(top = 18.dp)) {
                     Image(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_vector),
+                        imageVector = ImageVector.vectorResource(state.value.oilImage),
                         contentDescription = ""
                     )
-                    drawParameterGeneratorText(meanParameter = state.value.oilText)
+                    Box(modifier =Modifier.offset(y= (-10).dp) ) {
+                        drawParameterGeneratorText(meanParameter = state.value.oilText)
+                    }
                 }
 
             }
         }
     }
+    Log.i("go","tro")
 }
 
 @Composable
@@ -425,13 +399,13 @@ fun GeneratorBlock(state: State<MainViewState>) {
 fun CommandAndNavigationPanel(
     navController: NavHostController = rememberNavController(),
     viewModel: MainViewModel,
-    image: Int,
-    checked: Boolean,
+
+
 
 ) {
-    var imageButton=image
-    val checkedState = remember { mutableStateOf(checked) }
-    Log.i("go","dfsd")
+  val enabled=viewModel.uiController.generatorButtonEnabled.collectAsState()
+    val image=viewModel.uiController.generatorButtonImage.collectAsState()
+
     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
         IconButton(onClick = { navController.navigate("settings") }) {
             Image(
@@ -439,30 +413,19 @@ fun CommandAndNavigationPanel(
                 contentDescription = "",
             )
         }
-        IconToggleButton(checked = checkedState.value, onCheckedChange = {
-            checkedState.value = it
-            when(it) {
-             true->  {
-               viewModel.handleEvent(MainViewEvent.StopGeneratorEvent)
-                 imageButton =  R.drawable.ic_start_test
-             }
-                else -> {
-                    viewModel.handleEvent(MainViewEvent.StartGeneratorEvent)
-                    imageButton= R.drawable.ic_stop_test
-                }
-            }
-        }, Modifier.offset(y = (-27).dp)) {
+        IconButton (onClick = {
+
+            viewModel.handleEvent(MainViewEvent.GeneratorCommandEvent)
+        },  Modifier.offset(y = (-27).dp),enabled =enabled.value) {
             Image(
-                ImageVector.vectorResource(id = imageButton),
+                ImageVector.vectorResource(id = image.value),
                 contentDescription = "",
 
                 )
         }
         Log.i("go","dot")
 
-        IconButton(onClick = {
-
-        }) {
+        IconButton(onClick = { navController.navigate("instruction") }) {
             Image(
                 ImageVector.vectorResource(id = R.drawable.ic_instruction_test),
                 contentDescription = "",
@@ -479,11 +442,7 @@ fun Test(
     navController: NavHostController = rememberNavController(),
      viewModel: MainViewModel = hiltViewModel()
     ){
-   val alertShow by viewModel.alertDialog.collectAsState()
-    //if (alertShow.id.isNotEmpty()){
-    val resource= NotificationsResource("tgg")
-
-
+   val alertShow by viewModel.uiController.alertDialog.collectAsState()
     if (alertShow.id.isNotEmpty()) {
         Dialog(
             onDismissRequest = {},
@@ -492,8 +451,7 @@ fun Test(
             drawNotificationsSmall(viewModel, alertShow)
         }
     }
-        //  }
-        LaunchedEffect(true) {
+    LaunchedEffect(true) {
             viewModel.notification.collect {
                 if (it.title.isNotEmpty()) {
                     navController.currentBackStackEntry?.savedStateHandle?.set(
@@ -506,10 +464,12 @@ fun Test(
             }
         }
 
-   // val loading by viewModel.loading.collectAsState()
+   val loading by viewModel.loading.collectAsState()
     val error by viewModel.error.collectAsState()
          //if (loading) Loader()
-    if (error.isNotEmpty()) Toast.makeText(LocalContext.current,error, Toast.LENGTH_LONG).show()
+    if (error.isNotEmpty()){
+        Toast.makeText(LocalContext.current,error, Toast.LENGTH_LONG).show()
+    }
     val state=viewModel.configuration.collectAsState()
 
     Column(modifier = Modifier
@@ -526,12 +486,12 @@ fun Test(
         .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
 
         .alpha(1f)
-        .width(360.dp)
+        .fillMaxWidth()
       
         ) {
         Box(Modifier.padding( top = 48.dp)) {
             Log.i("go","gon")
-            ModeControlButton(viewModel,state)
+            ModeControlButton(viewModel)
         }
         Box(Modifier.padding(start = 16.dp, end = 16.dp,top=32.dp)){
             FirstBlock(viewModel,state)
@@ -544,7 +504,7 @@ fun Test(
 
 
 @Composable
-fun Rectangle(){
+fun Rectangle(color: Color){
     Box(
         Modifier
             .padding(start = 58.dp)
@@ -572,14 +532,7 @@ fun Rectangle(){
                         bottomEnd = 8.dp
                     )
                 )
-                .background(
-                    Color(
-                        red = 0.12159723043441772f,
-                        green = 0.8583333492279053f,
-                        blue = 0.3518272638320923f,
-                        alpha = 1f
-                    )
-                )
+                .background(color)
         )
     }
 }

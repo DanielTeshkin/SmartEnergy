@@ -80,22 +80,17 @@ class RemoteDataSource @Inject constructor(private val serverApi: ServerApi,cont
 
      suspend fun bindDevice( data: BindDeviceData): BaseApiResponse<Status> = processResponse { serverApi.bindDevice(data) }
 
-     suspend fun sendCommand(commandRequest: CommandRequest): BaseApiResponse<Status>  =
-         processResponse { serverApi.sendCommand(commandRequest) }
-
-    suspend fun sendMode( modeRequest: ModeRequest):BaseApiResponse<Status> = processResponse {
-        serverApi.sendMode(modeRequest)
-    }
+     suspend fun sendCommand(commandRequest: CommandRequest)  = processResponse { serverApi.sendCommand(commandRequest) }
+    suspend fun resetOdo(commandRequest: CommandRequest)  = processResponse { serverApi.resetOdo(commandRequest) }
+    suspend fun sendMode( modeRequest: ModeRequest)= processResponse { serverApi.sendMode(modeRequest) }
+    suspend fun updateInfo(request:UserInfoRequest) = processResponse { serverApi.updateUserInfo(request) }
 
      suspend fun getMetrics(id: String): BaseApiResponse<Metric> =processResponse { serverApi.getMetrics(id) }
 
-     suspend fun getParameters(id: String): BaseApiResponse<Parameter> = processResponse { serverApi.getParameters(id) }
+     suspend fun getParameters(id: String) = processResponse { serverApi.getParameters(id) }
 
-
-     suspend fun changeParameters(
-         id: String,
-         parameter: ParameterRequest
-    ): BaseApiResponse<Parameter> = processResponse { serverApi.changeParameters(id, parameter) }
+    suspend fun changeParameters(id: String,
+         parameter: ParameterRequest) = processResponse { serverApi.changeParameters(id, parameter) }
 
      suspend fun getNotifications(): BaseApiResponse<List<Notification>> = processListResponse { serverApi.getNotifications() }
     suspend fun clickOnOk(id: String): BaseApiResponse<Status> = processResponse {  serverApi.clickOnOk(id) }

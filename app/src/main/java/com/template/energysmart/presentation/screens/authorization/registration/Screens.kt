@@ -202,21 +202,24 @@ fun ConfirmCodeScreen(phone:String="",navHostController: NavHostController= reme
 
 ),viewModel: ConfirmCodeViewModel = hiltViewModel(),text: String,type: String?){
     var seconds:Long by remember{ mutableStateOf(60)}
-    var textReset by remember{ mutableStateOf("Отправить код можно 60с")}
+    var textReset by remember{ mutableStateOf("Отправить код повторно можно 60с")}
     var enabledReset =remember{ mutableStateOf(false)}
+    val timerFlag=remember{ mutableStateOf(true)}
+
     val timer= object  : CountDownTimer(60000,1000){
         override fun onTick(time: Long) {
             seconds=time/1000
-            textReset= "Отправить код можно ${seconds}с"
+            textReset= "Отправить код повторно можно ${seconds}с"
         }
 
         override fun onFinish() {
               textReset="Отправить код повторно"
+            timerFlag.value=false
             enabledReset.value=true
         }
 
     }
-    timer.start()
+    if (timerFlag.value) timer.start()
 
     Box(
         modifier = Modifier
@@ -244,7 +247,10 @@ fun ConfirmCodeScreen(phone:String="",navHostController: NavHostController= reme
         val code by viewModel.code.collectAsState()
         LaunchedEffect(true){
             viewModel.navigation.collect{
-                if(it) navHostController.navigate("create_password/${phone}")
+                if(it) {
+                    if (type == "reset") navHostController.navigate("reset_password/${phone}")
+                    else navHostController.navigate("create_password/${phone}")
+                }
             }
         }
         val loading by viewModel.loading.collectAsState()
@@ -296,6 +302,7 @@ fun ConfirmCodeScreen(phone:String="",navHostController: NavHostController= reme
 
                     .width(335.dp)
                     .align(Alignment.BottomCenter)
+                    .offset(y=25.dp)
                     //.height(17.dp)
 
                     .alpha(1f),
@@ -328,7 +335,7 @@ fun ConfirmCodeScreen(phone:String="",navHostController: NavHostController= reme
                 .onFocusEvent {
                     buttonPadding = when (it.isFocused) {
                         false -> 0.dp
-                        true -> 220.dp
+                        true -> 180.dp
 
                     }
 
@@ -385,6 +392,7 @@ fun ConfirmCodeScreen(phone:String="",navHostController: NavHostController= reme
             Button(
                 onClick = {
                     viewModel.disableButton()
+                    buttonPadding=0.dp
                     viewModel.confirmCode(phone,type)
 
                 }, modifier = Modifier
@@ -402,7 +410,7 @@ fun ConfirmCodeScreen(phone:String="",navHostController: NavHostController= reme
             TextButton(onClick = {
                 viewModel.sendNewCode(phone,type)
                 enabledReset.value=false
-                timer.start()
+                timerFlag.value=true
             }, enabled = enabledReset.value, modifier = Modifier
 
                 .padding(5.dp)
@@ -471,7 +479,7 @@ fun CreatePasswordScreen(phone: String = "", navController: NavHostController,
         if (error.isNotEmpty()) Toast.makeText(LocalContext.current,error,Toast.LENGTH_LONG).show()
 
         val coroutineScope= rememberCoroutineScope()
-        var buttonDp by remember{ mutableStateOf(450.dp)}
+        var buttonDp by remember{ mutableStateOf(0.dp)}
         val focusManager= LocalFocusManager.current
         val enabled = viewModel.enabled.collectAsState()
         val password = remember { mutableStateOf("") }
@@ -482,7 +490,7 @@ fun CreatePasswordScreen(phone: String = "", navController: NavHostController,
                 if(it) {
                     when(type){
                         "reset"->navController.navigate("sign-in")
-                        else-> navController.navigate("device")
+                        else-> navController.navigate("user_info")
                     }
 
                 }

@@ -5,10 +5,7 @@ import com.template.energysmart.data.remote.api.model.request.*
 
 import com.template.energysmart.data.remote.api.model.response.*
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface ServerApi {
 
@@ -22,20 +19,26 @@ interface ServerApi {
     @POST("/api/confirm/create/")
     suspend fun confirmNumber(@Body request: ConfirmNumberRequestData): Response<ConfirmNumberResponseData>
 
-    @POST("/confirm_pass/create/")
+    @POST("/api/confirm_pass/create/")
     suspend fun confirmNumberForReset(@Body request: ConfirmNumberRequestData): Response<ConfirmNumberResponseData>
 
     @POST("/api/confirm/confirmed/")
     suspend fun confirmCode(@Body request: ConfirmCodeRequestData): Response<ConfirmCodeResponseData>
 
-    @POST("api/confirm_pass/create/")
+    @POST("/api/confirm_pass/confirmed/")
     suspend fun confirmCodeForReset(@Body request: ConfirmCodeRequestData):Response<ConfirmCodeResponseData>
 
     @POST("/api/sign-up/")
     suspend fun registration(@Body request: SignUpRequestData): Response<AuthorizationData>
 
-    @POST("/api/sign-up/")
+    @POST("/api/reset_password/")
     suspend fun resetPassword(@Body request: ResetPasswordRequestData): Response<Status>
+
+    @PATCH("/api/user_info/update/")
+    suspend fun updateUserInfo(@Body request:UserInfoRequest):Response<*>
+
+    @POST("")
+    suspend fun unBindUser(@Path("id")id:String):Response<*>
 
 
 
@@ -53,6 +56,9 @@ interface ServerApi {
 
     @POST("/api/devices/mode/")
     suspend fun sendMode(@Body modeRequest: ModeRequest):Response<Status>
+
+    @POST("/api/devices/reset_odo/")
+    suspend fun resetOdo(@Body commandRequest: CommandRequest):Response<Status>
 
     @GET("/api/metric/{id}/")
     suspend  fun getMetrics(@Path ("id") id:String):Response<Metric>

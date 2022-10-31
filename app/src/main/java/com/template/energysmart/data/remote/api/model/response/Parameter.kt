@@ -52,5 +52,6 @@ data class Parameter(
     @SerializedName("active_state_time_s") val active_state_time_s : Int=0,
     @SerializedName("valve_for_accelerator") val valve_for_accelerator : Boolean=false,
     @SerializedName("active_state_time_a") val active_state_time_a : Int=0,
-    @SerializedName("fuelLevelSensor") val fuelLevelSensor : Boolean=false
+    @SerializedName("fuelLevelSensor") val fuelLevelSensor : Boolean=false,
+    @SerializedName("has_software_update") val has_software_update : Boolean=false
 )

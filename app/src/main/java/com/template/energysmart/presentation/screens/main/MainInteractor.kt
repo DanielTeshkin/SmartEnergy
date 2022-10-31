@@ -1,6 +1,7 @@
 package com.template.energysmart.presentation.screens.main
 
 
+import android.util.Log
 import com.template.energysmart.R
 import com.template.energysmart.data.remote.api.model.request.Command
 import com.template.energysmart.domain.GeneratorUseCase
@@ -34,7 +35,11 @@ class MainInteractor @Inject constructor(private val devicesUseCase:GeneratorUse
                 emit(_state, MainState.Loading(isLoading))},
                 { data ->
                     when(data){
-                        is DeviceState.ControlState -> emit(_state, MainState.DataState(data.energyControlModel))
+
+                        is DeviceState.ControlState -> {
+                            Log.i("succ","")
+                            emit(_state, MainState.DataState(data.energyControlModel))
+                        }
                         is DeviceState.NotificationsState ->{
                             val current=data.notificationModel.first()
                             when(current.data.format!=FormatNotification.ALERT_NOTIFY
@@ -46,7 +51,10 @@ class MainInteractor @Inject constructor(private val devicesUseCase:GeneratorUse
                     }
 
                 },
-                { error -> emit(_state, MainState.Error(error)) }
+                { error ->
+                    Log.i("error",error.message.toString())
+                    emit(_state, MainState.Error(error))
+                }
             )
     }
 

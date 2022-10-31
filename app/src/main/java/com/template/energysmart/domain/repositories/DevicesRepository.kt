@@ -13,9 +13,11 @@ interface DevicesRepository {
    suspend fun getDevice():Device
     suspend fun getMetrics():Metric
     fun sendCommand(command:Command):Flow<Status>
+    fun resetOdo(command:Command):Flow<Status>
     fun bindDevice(data: BindDeviceData):Flow<Status>
     fun saveDevice(id:String)
    fun updateMode(command: Command):Flow<Status>
    fun getSavedDevice():String
+
 
 }

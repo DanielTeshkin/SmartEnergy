@@ -1,35 +1,37 @@
 package com.template.energysmart.presentation.screens.settings
 
 
+import androidx.core.text.isDigitsOnly
 import com.template.energysmart.presentation.screens.settings.model.SettingsPresentationState
 import com.template.energysmart.presentation.screens.settings.model.UpdateSettingsModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class SettingsController() {
-    private val phaseControl= MutableStateFlow(false)
-    private val voltageControl= MutableStateFlow(false)
-    private val ecoMode= MutableStateFlow(false)
-    private val preventiveMode= MutableStateFlow(false)
-    private val notifyEnabled= MutableStateFlow(false)
-    private val timeLowVoltage= MutableStateFlow(0)
-    private val timeHighVoltage= MutableStateFlow(0)
-    private val voltageLow=MutableStateFlow(0.0)
-    private val voltageHigh=MutableStateFlow(0.0)
-    private val timePause=MutableStateFlow(0)
-    private val timeStop=MutableStateFlow(0)
-    private val timeWork=MutableStateFlow(0)
+    val phaseControl= MutableStateFlow(false)
+     val voltageControl= MutableStateFlow(false)
+     val ecoMode= MutableStateFlow(false)
+    val preventiveMode= MutableStateFlow(false)
+  val notifyEnabled= MutableStateFlow(false)
+ val timeLowVoltage= MutableStateFlow(0)
+    val timeHighVoltage= MutableStateFlow(0)
+     val voltageLow=MutableStateFlow(0.0)
+     val voltageHigh=MutableStateFlow(0.0)
+    val timePause=MutableStateFlow(0)
+     val timeStop=MutableStateFlow(0)
+     val timeWork=MutableStateFlow(0)
 
-    private val phaseFirstState=MutableStateFlow(false)
-    private val phaseSecondState=MutableStateFlow(false)
-    private val phaseThirdState=MutableStateFlow(false)
-    private val generalData= MutableStateFlow(GeneralSettingsData())
-    private val generalOdometr = MutableStateFlow(231)
-    private val odometrToChangeOil= MutableStateFlow(12)
-    private val timeWorkPreventive = MutableStateFlow(0)
-    private val  timeBeforeStartPreventive= MutableStateFlow(0)
-    private val loading= MutableStateFlow(false)
-    private val error= MutableStateFlow("")
-    private val phaseCount=MutableStateFlow(0)
+     val phaseFirstState=MutableStateFlow(false)
+     val phaseSecondState=MutableStateFlow(false)
+    val phaseThirdState=MutableStateFlow(false)
+     val generalData= MutableStateFlow(GeneralSettingsData())
+    val generalOdometr = MutableStateFlow(231)
+     val odometrToChangeOil= MutableStateFlow(12)
+     val timeWorkPreventive = MutableStateFlow(0)
+     val  timeBeforeStartPreventive= MutableStateFlow(0)
+    val loading= MutableStateFlow(false)
+     val error= MutableStateFlow("")
+     val phaseCount=MutableStateFlow(0)
+
 
     fun getStartViewState(data: SettingsPresentationState):SettingsViewState {
         data.apply {
@@ -60,7 +62,7 @@ class SettingsController() {
             when(settingsModel.phaseControl?.phase_count_control){
                 1-> phaseFirstState.value=true
                 2->phaseSecondState.value=true
-                3->phaseThirdState.value
+                3->phaseThirdState.value=true
             }
             preventiveMode.value=settingsModel.preventiveStart != null
             timeBeforeStartPreventive.value=data.settingsModel.preventiveStart?.time_before_start
@@ -117,21 +119,24 @@ class SettingsController() {
 
 
     private fun reduceValueChangeEvent(event: SettingsViewEvent.ValueChangerEvent) {
-        when(event.parameter){
-            ParameterValueType.VOLTAGE_LOW -> voltageLow.value=event.input.toDouble()
-            ParameterValueType.VOLTAGE_HIGH -> voltageHigh.value=event.input.toDouble()
-            ParameterValueType.TIME_LOW -> timeLowVoltage.value=event.input.toInt()
-            ParameterValueType.TIME_HIGH -> timeHighVoltage.value=event.input.toInt()
-            ParameterValueType.TIME_PAUSE -> timePause.value=event.input.toInt()
-            ParameterValueType.TIME_WORK -> timeWork.value=event.input.toInt()
-            ParameterValueType.TIME_STOP -> timeStop.value=event.input.toInt()
-            ParameterValueType.TIME_BEFORE_START -> timeBeforeStartPreventive.value=event.input.toInt()
-            ParameterValueType.TIME_PREVENTIVE_WORK -> timeWorkPreventive.value=event.input.toInt()
+        val input=event.input
+        when (event.parameter) {
+            ParameterValueType.VOLTAGE_LOW -> voltageLow.value = update(input,voltageLow.value)
+            ParameterValueType.VOLTAGE_HIGH -> voltageHigh.value = update(input,voltageHigh.value)
+            ParameterValueType.TIME_LOW -> timeLowVoltage.value = update(input,timeLowVoltage.value.toDouble()).toInt()
+            ParameterValueType.TIME_HIGH -> timeHighVoltage.value = update(input,timeHighVoltage.value.toDouble()).toInt()
+            ParameterValueType.TIME_PAUSE -> timePause.value =update(input,timePause.value.toDouble()).toInt()
+            ParameterValueType.TIME_WORK -> timeWork.value = update(input,timeWork.value.toDouble()).toInt()
+            ParameterValueType.TIME_STOP -> timeStop.value = update(input,timeStop.value.toDouble()).toInt()
+            ParameterValueType.TIME_BEFORE_START -> timeBeforeStartPreventive.value =
+                update(input,timeBeforeStartPreventive.value.toDouble()).toInt()
+            ParameterValueType.TIME_PREVENTIVE_WORK -> timeWorkPreventive.value =
+                update(input,timeWorkPreventive.value.toDouble()).toInt()
         }
 
 
     }
-
+    private fun  update(input:String,current:Double)=if (input.isDigitsOnly()) input.toDouble() else current
 
 
 

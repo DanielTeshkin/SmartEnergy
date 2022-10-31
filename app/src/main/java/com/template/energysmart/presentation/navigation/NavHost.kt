@@ -11,11 +11,13 @@ import com.template.energysmart.presentation.screens.authorization.registration.
 import com.template.energysmart.presentation.screens.authorization.registration.CreatePasswordScreen
 import com.template.energysmart.presentation.screens.device.components.BindDeviceContent
 import com.template.energysmart.presentation.screens.device.components.DeviceScreen
+import com.template.energysmart.presentation.screens.instruction.InstructionScreen
 
 import com.template.energysmart.presentation.screens.main.Test
 import com.template.energysmart.presentation.screens.notifications.DrawNotificationsFullScreen
 import com.template.energysmart.presentation.screens.notifications.NotificationViewState
 import com.template.energysmart.presentation.screens.settings.SettingsScreen
+import com.template.energysmart.presentation.screens.user.UserInfoScreen
 
 @Composable
 fun navigation(navController: NavHostController,startDestination: String){
@@ -50,9 +52,11 @@ fun navigation(navController: NavHostController,startDestination: String){
         composable("create_password/{phone}"){ backStackEntry->
             CreatePasswordScreen( backStackEntry.arguments?.getString("phone")?:"",navController)
         }
-        composable("notification"){
-
-            DrawNotificationsFullScreen(navController)
+        composable("reset_password/{phone}"){ backStackEntry->
+            CreatePasswordScreen( backStackEntry.arguments?.getString("phone")?:"",navController, type = "reset")
         }
+        composable("notification"){ DrawNotificationsFullScreen(navController) }
+        composable("instruction"){ InstructionScreen()}
+        composable("user_info"){ UserInfoScreen(navController = navController)}
     }
  }

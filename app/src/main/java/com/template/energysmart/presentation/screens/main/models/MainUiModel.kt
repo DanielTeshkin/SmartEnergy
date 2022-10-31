@@ -3,6 +3,8 @@ package com.template.energysmart.presentation.screens.main.models
 
 import androidx.compose.ui.graphics.Color
 import com.template.energysmart.R
+import com.template.energysmart.domain.model.PowerSource
+import com.template.energysmart.presentation.theme.GreenEclipse
 import com.template.energysmart.presentation.theme.MainGrayColor
 import java.lang.Error
 
@@ -27,31 +29,23 @@ data class MainViewState(
     val oilText:String="",
     val temperature: Int =0,
     val isCheckedCommand:Boolean=false,
-    var commandButton:Int=0,
+    var commandButton:Int=R.drawable.is_start_gray,
     var manualButton: Int=R.drawable.hand_button_gray,
     var autoButton: Int=R.drawable.auto_button,
     var autoButtonIsEnabled:Boolean=true,
     var handButtonIsEnabled:Boolean=false,
-    val commandButtonIsEnabled:Boolean=false,
+    var commandButtonIsEnabled:Boolean=false,
     val commandButtonImage:Int=R.drawable.ic_start_test,
     val homeImage:Int=R.drawable.ic_home_green,
     val phase_vol_1: Int =0,
     val phase_vol_2: Int =0,
     val phase_vol_3: Int =0,
+    val eclipseColor: Color= GreenEclipse,
+    val source:PowerSource= PowerSource.NOTHING,
+    val imageOil:Int =R.drawable.ic_vector,
+    val batteryImage:Int=R.drawable.ic_full_battery,
+    val  cold:Boolean=true
+
 
     )
-class MainUiConfigurationBuilder(){
-    var backgroundColor: Color = MainGrayColor
-    val electricNetworkImage= R.drawable.line_electro
-    val electricNetworkColor:Color= MainGrayColor
-        //val phasesImage=R.drawable.phases_line_gray
-    val generatorImage=R.drawable.generator_off
-    val imageStateGenerator=R.drawable.start_active
-   val imageFirst=R.drawable.ic_ev_station
 
-    fun backgroundColor(backgroundColor: Color) : MainUiConfigurationBuilder{
-        this.backgroundColor=backgroundColor
-        return this
-    }
-
-}
