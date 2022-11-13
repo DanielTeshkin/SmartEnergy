@@ -13,7 +13,7 @@ abstract class BaseInteractor {
    onSuccess: ((T) -> Unit)? = null,
    onError: ((Throwable) -> Unit)? = null
   ) {
-      scope?.let {
+      scope?.let { coroutineScope ->
           onStart { flow.emit(ResponseState.Loading(true)) }
               .onEach {
                   flow.emit(ResponseState.Success(it))
@@ -24,7 +24,7 @@ abstract class BaseInteractor {
                   onError?.invoke(it)
               }
               .onCompletion { flow.emit(ResponseState.Loading(false)) }
-              .launchIn(it)
+              .launchIn(coroutineScope)
       }
   }
 
@@ -33,7 +33,7 @@ abstract class BaseInteractor {
    onSuccess: ((T) -> Unit)? = null,
    onError: ((Throwable) -> Unit)? = null
   ) {
-      scope?.let {
+      scope?.let { coroutineScope ->
           onStart { flow.emit(ResponseState.Loading(true)) }
               .onEach {
                   flow.emit(ResponseState.Success(it))
@@ -44,7 +44,7 @@ abstract class BaseInteractor {
                   onError?.invoke(it)
               }
               .onCompletion { flow.emit(ResponseState.Loading(false)) }
-              .launchIn(it)
+              .launchIn(coroutineScope)
       }
   }
 

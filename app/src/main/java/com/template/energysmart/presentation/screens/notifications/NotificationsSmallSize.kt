@@ -74,7 +74,7 @@ fun drawNotificationsSmall(viewModel: MainViewModel, alertShow: AlertNotificatio
                 .background(alertShow.lineColor)
         )
 
-        Box(Modifier.fillMaxHeight()) {
+        Box(Modifier.fillMaxHeight().fillMaxWidth()) {
             Image(ImageVector.vectorResource(alertShow.imageClose), contentDescription ="" ,Modifier.offset(x = 16.dp,y=10.dp))
 
             Text(
@@ -101,7 +101,7 @@ fun drawNotificationsSmall(viewModel: MainViewModel, alertShow: AlertNotificatio
             )
             Image(ImageVector.vectorResource(R.drawable.ic_icon_1), contentDescription ="" ,
                 Modifier
-                    .offset( y = 12.dp,x=150.dp)
+                    .offset( y = 12.dp)
                     .align(Alignment.TopEnd)
                     .clickable {
                        viewModel.handleEvent(MainViewEvent.CloseAlertEvent(alertShow.id))

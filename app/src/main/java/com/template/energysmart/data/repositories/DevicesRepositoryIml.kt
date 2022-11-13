@@ -29,6 +29,7 @@ class DevicesRepositoryIml @Inject constructor(private val remote: RemoteDataSou
           emit(result)
    }
 
+
     override fun resetOdo(command: Command)=flow {
         val result=handleOrDefault(Status()) { remote.resetOdo(CommandRequest(local.getDeviceId(), command)) }
         emit(result)
@@ -44,7 +45,7 @@ class DevicesRepositoryIml @Inject constructor(private val remote: RemoteDataSou
     override fun saveDevice(id: String) =local.saveDevice(id)
 
     override fun updateMode(command: Command) = flow {
-      val result = handleOrDefault(Status()) {
+        val result = handleOrDefault(Status()) {
             remote.sendMode(
                 ModeRequest(
                     local.getDeviceId(), command
@@ -52,8 +53,15 @@ class DevicesRepositoryIml @Inject constructor(private val remote: RemoteDataSou
             )
         }
         emit(result)
+
     }
 
     override fun getSavedDevice(): String=local.getDeviceId()
+    override fun unbind(id: String)=flow{
+        val result=handle {  remote.unbind(local.getDeviceId(),id)}
+        emit(result)
+    }
+
+    override fun exit()=local.clear()
 
 }

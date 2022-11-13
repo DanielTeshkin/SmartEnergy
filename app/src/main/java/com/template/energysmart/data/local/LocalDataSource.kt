@@ -22,6 +22,8 @@ class LocalDataSource @Inject constructor(private val context: Context)  {
     fun saveParameter(parameter: Parameter){
 
     }
+    fun clear()=AppPreferences.getSharedPreferences(context).edit().putString("token", "")
+        .putString("refresh","").putString("device","").apply()
     fun rebirthToken()= AppPreferences.getSharedPreferences(context).edit().putString("token", "").apply()
 
     fun getDeviceId():String=AppPreferences.getSharedPreferences(context).getString("device", "")?:""

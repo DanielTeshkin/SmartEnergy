@@ -17,7 +17,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor( private val settingsInteractor: SettingsInteractor) : BaseViewModel() {
      private val _ui= MutableStateFlow(SettingsViewState())
       val ui=_ui.asStateFlow()
-    private val _users= MutableStateFlow(listOf<User>())
+    private val _users= MutableStateFlow(mutableListOf<User>())
     val user=_users.asStateFlow()
     val controller=SettingsController()
     init {
@@ -26,10 +26,11 @@ class SettingsViewModel @Inject constructor( private val settingsInteractor: Set
             handleState()
             getDevice()
             subscribe(state) { _ui.value = controller.getStartViewState(it) }
-            subscribe(users){_users.value=it}
+            subscribe(users){_users.value.addAll(it)}
         }
     }
     fun update()=settingsInteractor.update(controller.getUpdateModel())
+    fun exit()=viewModelScope.launch {  settingsInteractor.exit()}
 
     private fun state(){
 
@@ -38,4 +39,11 @@ class SettingsViewModel @Inject constructor( private val settingsInteractor: Set
         _ui.value= controller.reduceEvent(event)
     }
     fun resetOdo(command: Command)=settingsInteractor.resetOdo(command)
+    fun unbind(id:String)=settingsInteractor.unbind(id)
+    fun removeUser(id: String){
+        val user=_users.value.find { it.id==id }
+        _users.value.remove(user)
+    }
+    fun clear()=onCleared()
+
 }

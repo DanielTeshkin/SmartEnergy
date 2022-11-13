@@ -6,7 +6,7 @@ data class SettingsModel(
     val voltage_control: VoltageControl?=null,
     val eco_control:EcoControl?=null,
     val preventiveStart:PreventiveMode?=null,
-    val phaseControl:PhaseControl?= null,
+    val phaseControl:PhaseControl= PhaseControl(0,true),
     val version:String="2.4",
     val balance:String="0",
     val phone:String="",
@@ -36,5 +36,6 @@ val time_work: Int=0,
 val time_before_start:Int = 0)
 
 data class PhaseControl(
-    val phase_count_control:Int
+    val phase_count_control:Int,
+    val state:Boolean=true,
     )

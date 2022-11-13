@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 typealias Loader =(Boolean) -> Unit
 typealias Success<T> = (T) -> Unit
-typealias Error=(String) -> Unit
+typealias Error=(Throwable) -> Unit
 abstract class BaseViewModel :ViewModel() {
    protected fun CoroutineScope.repeat(repeatMillis: Long, action: suspend () -> Unit) = this.launch {
         withContext(Dispatchers.IO) {
@@ -25,7 +25,7 @@ abstract class BaseViewModel :ViewModel() {
         when(state){
             is ResponseState.Loading -> loader.invoke(state.isLoading)
             is ResponseState.Success -> success.invoke(state.item)
-            is ResponseState.Error -> error.invoke(state.throwable.message?:"")
+            is ResponseState.Error -> error.invoke(state.throwable)
         }
 
 

@@ -25,8 +25,6 @@ import androidx.compose.ui.text.style.TextOverflow
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.text.isDigitsOnly
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.smarttoolfactory.slider.ColorfulSlider
 import com.smarttoolfactory.slider.MaterialSliderDefaults
 import com.smarttoolfactory.slider.SliderBrushColor
@@ -142,7 +140,8 @@ fun SliderParameter(
 
 @Composable
 fun PanelPhaseControl(
-    enabled: Boolean = false, viewModel: SettingsViewModel, value: Int){
+    enabled: Boolean = false, viewModel: SettingsViewModel, value: State<Int>
+){
     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()){
         Text(
             text = "Контроль по фазе",
@@ -192,13 +191,13 @@ fun PanelPhaseControl(
     }
 }
 @Composable
-fun PanelPhase(viewModel: SettingsViewModel, value: Int) {
-    var checked_first = value==1
-    var image_first =if (value==1) R.drawable.round_green else R.drawable.ic_group_16
-    var checked_second = value==2
-    var image_second =if (value==2) R.drawable.round_green else R.drawable.ic_group_16
-    var checked_third =value==3
-    var image_third =if (value==3) R.drawable.round_green else R.drawable.ic_group_16
+fun PanelPhase(viewModel: SettingsViewModel, count: State<Int>) {
+    val checked_first = (count.value==1)
+    val image_first =if (count.value==1) R.drawable.round_green else R.drawable.ic_group_16
+    val checked_second = count.value==2
+    val image_second  =if (count.value==2) R.drawable.round_green else R.drawable.ic_group_16
+    val checked_third =count.value==3
+    val image_third =if (count.value==3) R.drawable.round_green else R.drawable.ic_group_16
     Row {
         IconToggleButton(checked = checked_first, onCheckedChange ={
 
@@ -226,7 +225,7 @@ fun PanelPhase(viewModel: SettingsViewModel, value: Int) {
         }
         IconToggleButton(checked = checked_third, onCheckedChange ={
 
-            viewModel.handleEvent(SettingsViewEvent.СhoicePhaseEvent(it,2))
+            viewModel.handleEvent(SettingsViewEvent.СhoicePhaseEvent(it,3))
 
         } ) {
             Box{

@@ -69,7 +69,10 @@ fun UserItem(
 ){
     Column(Modifier.background(Color.Transparent).fillMaxWidth()) {
         Box(Modifier.fillMaxWidth()){
-            IconButton(onClick = { /*TODO*/ }, Modifier.align(Alignment.TopEnd)) {
+            IconButton(onClick = { viewModel.apply {
+                unbind(id)
+                removeUser(id)
+            }}, Modifier.align(Alignment.TopEnd)) {
                 Image(imageVector = ImageVector.vectorResource(id = R.drawable.delete_user), contentDescription = ""
                 )
             }

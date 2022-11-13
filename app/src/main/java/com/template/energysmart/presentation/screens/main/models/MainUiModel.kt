@@ -37,15 +37,18 @@ data class MainViewState(
     var commandButtonIsEnabled:Boolean=false,
     val commandButtonImage:Int=R.drawable.ic_start_test,
     val homeImage:Int=R.drawable.ic_home_green,
-    val phase_vol_1: Int =0,
-    val phase_vol_2: Int =0,
-    val phase_vol_3: Int =0,
+    val phase_vol_1: String ="0",
+    val phase_vol_2: String ="0",
+    val phase_vol_3: String ="0",
     val eclipseColor: Color= GreenEclipse,
     val source:PowerSource= PowerSource.NOTHING,
     val imageOil:Int =R.drawable.ic_vector,
     val batteryImage:Int=R.drawable.ic_full_battery,
-    val  cold:Boolean=true
+    val cold:Boolean=true,
 
+    val network_1: Int =0,
+    val network_2: Int =0,
+    val network_3: Int =0,
 
     )
 

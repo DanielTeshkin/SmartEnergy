@@ -38,5 +38,8 @@ data class Metric(
     @SerializedName("ttb") val ttb :Int=0,
     @SerializedName("pushnot") val pushnot : String="",
     @SerializedName("lastpus") val lastpus : String="",
-    @SerializedName("cmd") val cmd : String=""
+    @SerializedName("cmd") val cmd : String="",
+    @SerializedName("pw1") val pw1 :Double=0.0,
+    @SerializedName("pw2") val pw2 :Double=0.0,
+    @SerializedName("pw3") val pw3:Double=0.0,
 )

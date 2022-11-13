@@ -39,9 +39,15 @@ data class GeneralMetric(
     val time_work_timer:String="",
     val temperature:Int=0,
     val oil_level:String="",
-    val voltage_1:Int=0,
-    val voltage_2:Int=0,
-    val voltage_3:Int=0,
+    val voltage_1:Double=0.0,
+    val voltage_2:Double=0.0,
+    val voltage_3:Double=0.0,
+    val network_1:Int=0,
+    val network_2:Int=0,
+    val network_3:Int=0
+
+
+
 )
 
 enum class SystemState {

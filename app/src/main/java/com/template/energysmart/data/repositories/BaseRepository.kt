@@ -1,6 +1,7 @@
 package com.template.energysmart.data.repositories
 
 import com.template.energysmart.data.remote.api.base.ApiErrorResponse
+import com.template.energysmart.data.remote.api.base.ApiException
 import com.template.energysmart.data.remote.api.base.ApiResponse
 import com.template.energysmart.data.remote.api.base.BaseApiResponse
 import kotlinx.coroutines.flow.first
@@ -15,7 +16,7 @@ open class BaseRepository {
     protected suspend inline fun <T> handle(crossinline action: suspend () -> BaseApiResponse<T>): T? {
         return when (val result = action.invoke()) {
             is ApiResponse -> result.result
-            is ApiErrorResponse -> throw result.exception
+            is ApiErrorResponse -> throw  ApiException(result.message)
             else -> throw IllegalStateException()
         }
     }
@@ -27,7 +28,7 @@ open class BaseRepository {
     protected suspend inline fun <T> handleList(crossinline action: suspend () -> BaseApiResponse<List<T>>): List<T>? {
         return when (val result = action.invoke()) {
             is ApiResponse<List<T>> -> result.result
-            is ApiErrorResponse -> throw result.exception
+            is ApiErrorResponse -> throw ApiException(result.message)
             else -> throw IllegalStateException()
         }
     }

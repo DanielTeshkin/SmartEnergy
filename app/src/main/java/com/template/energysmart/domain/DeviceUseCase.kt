@@ -2,12 +2,8 @@ package com.template.energysmart.domain
 
 import com.template.energysmart.data.remote.api.model.request.Command
 import com.template.energysmart.data.remote.api.model.request.ParameterRequest
-import com.template.energysmart.data.remote.api.model.response.Device
-import com.template.energysmart.data.remote.api.model.response.Metric
-import com.template.energysmart.data.remote.api.model.response.Parameter
 import com.template.energysmart.domain.mappers.Mapper
 import com.template.energysmart.domain.model.DeviceState
-import com.template.energysmart.domain.model.EnergyControlModel
 import com.template.energysmart.domain.model.NotificationModel
 import com.template.energysmart.domain.repositories.DevicesRepository
 import com.template.energysmart.domain.repositories.NotificationsRepository
@@ -27,10 +23,12 @@ class GeneratorUseCase @Inject constructor(private val devicesRepository: Device
     fun updateMode(command: Command)=devicesRepository.updateMode(command)
     fun resetOdo(command: Command)=devicesRepository.resetOdo(command)
     fun closeAlert(id:String)=notificationsRepository.clickOnOk(id)
+    fun unbind(id: String)=devicesRepository.unbind(id)
     fun getDevice()=flow{
         val result= devicesRepository.getDevice()
         emit(result)
     }
+    fun exit()=devicesRepository.exit()
 
     private suspend fun notificationMap()=
         notificationsRepository.getNotificationList().map {
@@ -40,7 +38,8 @@ class GeneratorUseCase @Inject constructor(private val devicesRepository: Device
    private  suspend fun getMetrics() =devicesRepository.getMetrics()
     fun invokeSettings()=flow{
         val result=settingsRepository.getParameter()
-        emit(mapper.mapParameter(result))
+        val metrics=devicesRepository.getMetrics()
+        emit(mapper.mapParameter(result,metrics))
     }
 
     fun invoke()= flow {

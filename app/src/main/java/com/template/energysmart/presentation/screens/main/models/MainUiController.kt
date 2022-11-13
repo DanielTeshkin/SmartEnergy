@@ -4,21 +4,17 @@ package com.template.energysmart.presentation.screens.main.models
 import android.util.Log
 import com.template.energysmart.R
 import com.template.energysmart.data.remote.api.model.request.Command
-import com.template.energysmart.domain.model.Mode
 import com.template.energysmart.domain.model.Mode.*
 import com.template.energysmart.domain.model.PowerSource
-import com.template.energysmart.domain.model.SystemState
 import com.template.energysmart.domain.model.TemperatureState
 import com.template.energysmart.presentation.data.ResourceSource
 import com.template.energysmart.presentation.screens.main.MainInteractor
 import com.template.energysmart.presentation.screens.main.MainViewEvent
 import com.template.energysmart.presentation.screens.notifications.AlertNotificationState
-import com.template.energysmart.presentation.state.DataMain
 import com.template.energysmart.presentation.state.MainState
 import com.template.energysmart.presentation.theme.GreenEclipse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlin.math.absoluteValue
 
 
 class MainUiController( private val interactor: MainInteractor) {
@@ -82,9 +78,9 @@ class MainUiController( private val interactor: MainInteractor) {
            electricNetworkImage = source.network[data.generalState.city_network]?: R.drawable.line_electro,
            homeImage = source.home[data.generalState.energy_supply_home]?:R.drawable.ic_home_green,
            generatorImage = source.generator[data.generalState.generator_state]?:R.drawable.generator_off,
-           phase_vol_3 = data.metric.voltage_3,
-           phase_vol_2 = data.metric.voltage_2,
-           phase_vol_1 = data.metric.voltage_1,
+           phase_vol_3 = data.metric.voltage_3.toString(),
+           phase_vol_2 = data.metric.voltage_2.toString(),
+           phase_vol_1 = data.metric.voltage_1.toString(),
            oilText = data.metric.time_to_change_oil,
            temperature = data.metric.temperature,
            stationText = data.metric.oil_level,
@@ -108,7 +104,10 @@ class MainUiController( private val interactor: MainInteractor) {
            source = state.data.power_source,
            oilImage = oilImage?:R.drawable.ic_vector,
            batteryImage = batteryImage?:R.drawable.ic_full_battery,
-           cold = cold
+           cold = cold,
+           network_3 = data.metric.network_3,
+           network_2 = data.metric.network_2,
+           network_1 = data.metric.network_1
 
        )
 

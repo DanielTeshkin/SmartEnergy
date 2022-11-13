@@ -5,6 +5,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +37,10 @@ import com.template.energysmart.presentation.theme.MainGrayColor
 @Composable
 @Preview
 fun SettingsScreen(navHostController: NavHostController= rememberNavController(),
-                   viewModel: SettingsViewModel= hiltViewModel(),scrollState: ScrollState = rememberScrollState()) {
+                   viewModel: SettingsViewModel= hiltViewModel()) {
+    DisposableEffect(key1 =true){
+        onDispose {viewModel.clear()  }
+    }
 
     Column(
            modifier = Modifier
@@ -49,7 +54,7 @@ fun SettingsScreen(navHostController: NavHostController= rememberNavController()
                )
                .background(MainGrayColor)
                .fillMaxWidth()
-               .verticalScroll(scrollState)
+               .verticalScroll(rememberScrollState(), flingBehavior = null)
 
 
        ) {
@@ -159,7 +164,7 @@ fun SettingsScreen(navHostController: NavHostController= rememberNavController()
             PanelPhaseControl(
                 phaseControl.value,
                 viewModel,
-                controller.phaseCount.collectAsState().value
+                controller.phaseCount.collectAsState()
             )
         }
 
@@ -387,20 +392,22 @@ fun SettingsScreen(navHostController: NavHostController= rememberNavController()
                 .padding(top = 20.dp, bottom = 10.dp),
             contentAlignment = Alignment.Center
         ) {
+
             TitleText(text = "Пользователи")
         }
-        Box(Modifier.height(80.dp)) {
+        val size=80.dp * users.value.size
+        Box(Modifier.height(size)) {
             LazyColumn(
                 content = {
                     items(users.value) {
                         UserItem(it.username, it.first_name ?: "Неизвестный", it.id, viewModel)
                     }
-                }
+                }, userScrollEnabled = false
             )
         }
 
 
-        Box(Modifier.padding(start = 80.dp, end = 80.dp, top = 20.dp, bottom = 40.dp)) {
+        Box(Modifier.padding(start = 80.dp, end = 80.dp, top = 20.dp)) {
             IconButton(onClick = { viewModel.update() }) {
                 Image(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_group_142),
@@ -408,6 +415,16 @@ fun SettingsScreen(navHostController: NavHostController= rememberNavController()
                 )
             }
         }
+        Box(Modifier.padding(start = 80.dp, end = 80.dp, top = 20.dp, bottom = 50.dp)) {
+            Button(onClick = { viewModel.exit()
+            navHostController.navigate("start")
+            }, shape = RoundedCornerShape(30.dp), colors=ButtonDefaults.buttonColors(backgroundColor = Color.Red), modifier = Modifier
+                .width(200.dp)
+                .height(48.dp)) {
+                Text(text = "Выйти", textAlign = TextAlign.Center, color = Color.White)
+            }
+        }
+
 
 
 

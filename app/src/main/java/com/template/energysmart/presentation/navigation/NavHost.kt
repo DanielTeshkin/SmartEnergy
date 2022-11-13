@@ -36,7 +36,7 @@ fun navigation(navController: NavHostController,startDestination: String){
     NavHost(navController = navController, startDestination = startDestination) {
         composable("start"){ StartScreen(navController)}
         composable("main") { Test(navController)}
-        composable("settings") { SettingsScreen() }
+        composable("settings") { SettingsScreen(navController) }
         composable("sign-in"){ AuthorizationScreen(navController)}
         composable("device"){  DeviceScreen(navController = navController) }
         composable("confirm_number"){ ConfirmNumberScreen(navController =  navController,

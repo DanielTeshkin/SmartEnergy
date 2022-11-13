@@ -2,11 +2,12 @@ package com.template.energysmart.data.remote.api.base
 
 import com.expostore.api.base.ErrorResponse
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.google.gson.annotations.SerializedName
 import retrofit2.Response
 
 
 data class ApiErrorResponse<T>(
-    @JsonProperty("detail")
+    @SerializedName("detail")
     val message: String = "",
 ) : BaseApiResponse<T>() {
     val exception: ApiException

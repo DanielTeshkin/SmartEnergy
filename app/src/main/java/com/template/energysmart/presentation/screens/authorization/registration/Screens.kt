@@ -220,6 +220,8 @@ fun ConfirmCodeScreen(phone:String="",navHostController: NavHostController= reme
 
     }
     if (timerFlag.value) timer.start()
+    val error by viewModel.error.collectAsState()
+    if(error.isNotEmpty()) Toast.makeText(LocalContext.current,error,Toast.LENGTH_LONG).show()
 
     Box(
         modifier = Modifier
@@ -302,7 +304,7 @@ fun ConfirmCodeScreen(phone:String="",navHostController: NavHostController= reme
 
                     .width(335.dp)
                     .align(Alignment.BottomCenter)
-                    .offset(y=25.dp)
+                    .offset(y = 25.dp)
                     //.height(17.dp)
 
                     .alpha(1f),
@@ -478,10 +480,9 @@ fun CreatePasswordScreen(phone: String = "", navController: NavHostController,
         if (loading) Loader()
         if (error.isNotEmpty()) Toast.makeText(LocalContext.current,error,Toast.LENGTH_LONG).show()
 
-        val coroutineScope= rememberCoroutineScope()
+
         var buttonDp by remember{ mutableStateOf(0.dp)}
-        val focusManager= LocalFocusManager.current
-        val enabled = viewModel.enabled.collectAsState()
+
         val password = remember { mutableStateOf("") }
         val repeat_password = remember{ mutableStateOf("")}
         val buttonEnabled by viewModel.enabled.collectAsState()
@@ -677,7 +678,7 @@ fun CreatePasswordScreen(phone: String = "", navController: NavHostController,
             Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = buttonDp), horizontalAlignment = Alignment.CenterHorizontally) {
-            val context = LocalContext.current
+
 
             Button(
                 onClick = {

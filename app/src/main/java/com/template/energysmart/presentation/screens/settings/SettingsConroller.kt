@@ -58,7 +58,9 @@ class SettingsController() {
             timeHighVoltage.value=data.settingsModel.voltage_control?.time_high?: 0
             voltageHigh.value=data.settingsModel.voltage_control?.voltage_high?: 0.0
             voltageLow.value=data.settingsModel.voltage_control?.voltage_low?: 0.0
-            phaseControl.value=settingsModel.phaseControl != null
+            phaseControl.value=settingsModel.phaseControl.state
+
+            phaseCount.value=settingsModel.phaseControl.phase_count_control?:1
             when(settingsModel.phaseControl?.phase_count_control){
                 1-> phaseFirstState.value=true
                 2->phaseSecondState.value=true

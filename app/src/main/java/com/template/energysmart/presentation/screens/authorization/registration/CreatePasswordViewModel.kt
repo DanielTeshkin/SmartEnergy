@@ -1,6 +1,7 @@
 package com.template.energysmart.presentation.screens.authorization.registration
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.template.energysmart.presentation.base.BaseViewModel
 import com.template.energysmart.presentation.screens.authorization.AuthorizationInteractor
@@ -45,10 +46,15 @@ class CreatePasswordViewModel @Inject constructor(private val interactor: Author
         interactor.apply {
             scope = viewModelScope
             start(viewModelScope) {
-                subscribe(ui) {
-                    handleState(it, {_loading.value=it},{_navigation.value=true},{ _error.value = it ?: ""})
+                subscribe(ui) { state ->
+                    handleState(state, {_loading.value=it},{_navigation.value=true},
+                        { Log.i("error",it.message.toString())
+
+                            _error.value = it.message?: "Пользователь существует" })
             }
-                subscribe(status){ handleState(it, {_loading.value=it},{_navigation.value=true},{ _error.value = it ?: ""})
+                subscribe(status) { handleState(it, {_loading.value=it},{_navigation.value=true},{
+                    Log.i("error",it.message.toString())
+                    _error.value = it.message ?: "Пользователь существует"})
         }
             }
         }

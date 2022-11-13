@@ -132,6 +132,54 @@ fun FirstBlock(viewModel: MainViewModel, state: State<MainViewState>) {
                 )
 
             }
+                Box(modifier = Modifier.align(Alignment.BottomCenter).offset(y = (-5).dp)) {
+
+                        Row{
+                            Text(text =state.value.network_1.toString(), modifier = Modifier.offset(
+                                (-8).dp
+                            ),
+                                fontSize = 10.sp,textDecoration = TextDecoration.None,
+                                letterSpacing = 0.10000000149011612.sp,
+                                lineHeight = 10.sp,
+                                overflow = TextOverflow.Ellipsis, color = Color(
+                                    red = 0f,
+                                    green = 0f,
+                                    blue = 0f,
+                                    alpha = 0.46000000834465027f
+                                ),
+                                fontWeight = FontWeight.Normal,
+                                fontStyle = FontStyle.Normal,)
+                            Text(text = state.value.network_2.toString(), fontSize = 10.sp,
+                                textDecoration = TextDecoration.None,
+                                letterSpacing = 0.10000000149011612.sp,
+                                lineHeight = 10.sp,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier =Modifier.alpha(1f),
+                                color = Color(
+                                    red = 0f,
+                                    green = 0f,
+                                    blue = 0f,
+                                    alpha = 0.46000000834465027f
+                                ),
+                                fontWeight = FontWeight.Normal,
+                                fontStyle = FontStyle.Normal,)
+                            Text(text = state.value.network_3.toString(),
+                                textDecoration = TextDecoration.None,
+                                letterSpacing = 0.10000000149011612.sp,
+                                lineHeight = 10.sp,
+                                overflow = TextOverflow.Ellipsis,fontSize = 10.sp,modifier = Modifier.offset(9.dp),
+                                color = Color(
+                                    red = 0f,
+                                    green = 0f,
+                                    blue = 0f,
+                                    alpha = 0.46000000834465027f
+                                ),
+                                fontWeight = FontWeight.Normal,
+                                fontStyle = FontStyle.Normal,
+                            )
+                        }
+
+                }
                 Box(modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .offset(y = 7.dp)
@@ -592,7 +640,7 @@ fun TestPhaseGenerator(state: State<MainViewState>){
 @Composable
 
 fun TestPointNetwork(state: State<MainViewState>) {
-    Row(){
+    Row{
         Image(ImageVector.vectorResource(state.value.pNetworkImageFirst), contentDescription = ""
             )
         Image(ImageVector.vectorResource(state.value.pNetworkImageSecond), contentDescription = "", modifier = Modifier.padding(start=12.dp)

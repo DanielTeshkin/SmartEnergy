@@ -18,6 +18,8 @@ interface DevicesRepository {
     fun saveDevice(id:String)
    fun updateMode(command: Command):Flow<Status>
    fun getSavedDevice():String
+   fun unbind(id: String):Flow<*>
+   fun exit()
 
 
 }

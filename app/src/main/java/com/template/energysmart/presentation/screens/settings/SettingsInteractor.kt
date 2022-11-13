@@ -27,10 +27,12 @@ class SettingsInteractor @Inject constructor(private val useCase: GeneratorUseCa
            // emit(state,SettingsPresentationState(error =it.localizedMessage ))
         })
     }
+    fun exit()=useCase.exit()
 
     fun resetOdo(request:Command)=useCase.resetOdo(request).handleResult()
     fun update(model:UpdateSettingsModel)=useCase.updateParameter(model).handleResult()
      fun getDevice()=useCase.getDevice().handleResult(device,{
          users.value=it.users
      })
+    fun unbind(id:String)=useCase.unbind(id)
 }

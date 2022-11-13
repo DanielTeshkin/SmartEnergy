@@ -20,35 +20,47 @@ class Mapper @Inject constructor() {
                 phaseControl = if(parameter.phasescount) 0 else parameter.phasecontrol,model.sw.toInt())
 
         val timeToChangeOil=model.toil/3600
+        val mode=if(model.mode=="AUTO") "AUTO" else "MANUAL"
 
         Log.i("q",timeToChangeOil.toString())
 
         val metrics= when(model.sw.toInt()) {
                1 -> GeneralMetric(
-                   voltage_1 = model.input1.toInt(),
-                   voltage_2 = model.input2.toInt(),
-                   voltage_3 = model.input3.toInt(),
+                   voltage_1 = model.pw1,
+                   voltage_2 = model.pw2,
+                   voltage_3 = model.pw3,
                    temperature = model.temperature_air.toInt(),
                    oil_level = model.fuel.toString(),
                    time_to_change_oil =timeToChangeOil.toString(),
-                   time_work_timer = (model.ttb/3600000).toString()
+                   time_work_timer = (model.ttb/3600000).toString(),
+                   network_1 = model.input1.toInt(),
+                   network_2 = model.input2.toInt(),
+                   network_3 = model.input3.toInt()
+
                )
-               2 -> GeneralMetric(voltage_1 = model.gin.toInt(),
+               2 -> GeneralMetric(voltage_1 = model.gin,
                    voltage_2
-                   = model.gin.toInt()
+                   = model.gin
                    ,
-               voltage_3 = model.gin.toInt(),
+               voltage_3 = model.gin,
                temperature = model.temperature_air.toInt(),
                oil_level = model.fuel.toString(),
                time_to_change_oil = timeToChangeOil.toString(),
-               time_work_timer = (model.ttb/3600000).toString())
-               else ->  GeneralMetric(voltage_1 =0, voltage_2 =0, voltage_3 =0, temperature = model.temperature_air.toInt(),
+               time_work_timer = (model.ttb/3600000).toString(),
+                   network_1 = model.input1.toInt(),
+                   network_2 = model.input2.toInt(),
+                   network_3 = model.input3.toInt())
+               else ->  GeneralMetric(voltage_1 =0.0, voltage_2 =0.0, voltage_3 =0.0, temperature = model.temperature_air.toInt(),
                    oil_level = model.fuel.toString(),
                    time_to_change_oil = model.toil.toString(),
-                   time_work_timer = model.ttb.toString())
+                   time_work_timer = model.ttb.toString(),
+            network_1 = 0,
+            network_2 = 0,
+            network_3 =0,
+               )
            }
         val generalState=systemStateController.getGeneralState()
-        val buttonState=if(model.bs.toInt()==1) ButtonState.GRAY else checkButtonState(model, device)
+        val buttonState=if(model.bs.toInt()==1) ButtonState.GRAY else checkButtonState(model, mode)
         val oilState=if(timeToChangeOil>10)OilState.OK else if(timeToChangeOil in 0..10) OilState.WARNING else OilState.CRITICAL
         val temperatureState=if(model.temperature_air.toInt()<0)TemperatureState.MINUS else TemperatureState.PLUS
         val batteryState= when {
@@ -61,7 +73,7 @@ class Mapper @Inject constructor() {
         return EnergyControlModel(
             generalState = generalState,
             metric = metrics,
-            eco_control = if(device.mode=="AUTO")   EcoControl(
+            eco_control = if(mode=="AUTO")   EcoControl(
                 time_pause = parameter.pause_before_starting_the_generator,
                 time_stop = parameter.downtime,
                 time_work = parameter.eco_generator_run_time
@@ -72,7 +84,7 @@ class Mapper @Inject constructor() {
                 else ->PowerSource.NOTHING
             }
             ,
-            mode = Mode.valueOf(device.mode),
+            mode = Mode.valueOf(mode),
             buttonState = buttonState,
             oilState = oilState,
             temperatureState = temperatureState,
@@ -81,13 +93,13 @@ class Mapper @Inject constructor() {
         )
     }
 
-    private fun checkButtonState(model: Metric,device: Device)=when(model.state){
-        0-> if(device.mode=="AUTO")  ButtonState.GRAY else ButtonState.GREEN
+    private fun checkButtonState(model: Metric,mode:String)=when(model.state){
+        0-> if(mode=="AUTO")  ButtonState.GRAY else ButtonState.GREEN
         1-> ButtonState.RED
         else->ButtonState.GRAY
     }
 
-    fun mapParameter(parameter: Parameter)= SettingsModel(
+    fun mapParameter(parameter: Parameter, metrics: Metric)= SettingsModel(
         voltage_control =
         when (parameter.voltage_control) {
             true -> VoltageControl(
@@ -116,18 +128,18 @@ class Mapper @Inject constructor() {
             false -> null
         },
         phaseControl = when(parameter.phasescount){
-            true-> PhaseControl(phase_count_control = parameter.phasecontrol)
-            false -> null
+            true-> PhaseControl(phase_count_control = parameter.phasecontrol,state=true)
+            false -> PhaseControl(phase_count_control = parameter.phasecontrol,state=false)
         },
-        balance = parameter.blns.toString(),
-        phone = parameter.phone,
-        version = parameter.fmw.toString(),
-        energy = parameter.ti.toString(),
-        level_oil = parameter.pow.toString(),
-        general_odometr = parameter.toil.toInt(),
-        odometr_before_change_oil = parameter.reset_oil_change.toInt(),
-        temperatureAir = parameter.odo.toString(),
-        temperatureGenerator = parameter.activation_temperature.toString(),
+        balance = metrics.blns.toString(),
+        phone =metrics.phone,
+        version = metrics.fmw.toString(),
+        energy = metrics.ti.toString(),
+        level_oil = metrics.pow.toString(),
+        general_odometr = metrics.toil.toInt(),
+        odometr_before_change_oil =parameter.reset_oil_change.toInt(),
+        temperatureAir = metrics.temperature_air.toString(),
+        temperatureGenerator = metrics.temperature_generator.toString(),
         notifyEnabled = parameter.notifDisabled
     )
 

@@ -37,8 +37,8 @@ interface ServerApi {
     @PATCH("/api/user_info/update/")
     suspend fun updateUserInfo(@Body request:UserInfoRequest):Response<*>
 
-    @POST("")
-    suspend fun unBindUser(@Path("id")id:String):Response<*>
+    @POST("/api/devices/{id}/untie_device/")
+    suspend fun unBindUser(@Path("id")id:String, @Body request:UnBindRequest):Response<*>
 
 
 
@@ -74,6 +74,8 @@ interface ServerApi {
 
     @POST("/api/notification/push/{id}/click_push_ok/")
     suspend fun clickOnOk(@Path("id") id:String):Response<Status>
+
+
 
 
 

@@ -39,8 +39,8 @@ class RemoteDataSource @Inject constructor(private val serverApi: ServerApi,cont
     private fun processError(throwable: Throwable) =
         when (throwable) {
             is UnknownServiceException, is UnknownHostException, is ConnectException ->
-                ApiException("sss")
-            is SocketTimeoutException -> ApiException("yyy")
+                ApiException("Неизвестная ошибка")
+            is SocketTimeoutException -> ApiException("Время ожидания истекло")
             is JsonParseException -> ApiException("fff")
             is JsonSyntaxException -> ApiException("ddd")
             else -> throwable
@@ -94,4 +94,5 @@ class RemoteDataSource @Inject constructor(private val serverApi: ServerApi,cont
 
      suspend fun getNotifications(): BaseApiResponse<List<Notification>> = processListResponse { serverApi.getNotifications() }
     suspend fun clickOnOk(id: String): BaseApiResponse<Status> = processResponse {  serverApi.clickOnOk(id) }
+    suspend fun unbind(id: String,user_id:String)= processResponse { serverApi.unBindUser(id,UnBindRequest(user_id)) }
 }
