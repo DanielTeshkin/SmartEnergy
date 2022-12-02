@@ -4,10 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.template.energysmart.R
 import com.template.energysmart.data.remote.api.model.request.Command
 import com.template.energysmart.domain.model.*
-import com.template.energysmart.presentation.theme.ErrorText
-import com.template.energysmart.presentation.theme.Gray
-import com.template.energysmart.presentation.theme.GreenEclipse
-import com.template.energysmart.presentation.theme.Orange
+import com.template.energysmart.presentation.theme.*
 
 class ResourceSource {
     val home= mutableMapOf(SystemState.DISABLED to R.drawable.ic__home_gray,
@@ -44,7 +41,7 @@ class ResourceSource {
        ButtonState.GREEN to R.drawable.ic_start_test,ButtonState.GRAY to R.drawable.is_start_gray)
     val eclipse= mutableMapOf(SystemState.STABLE to GreenEclipse,SystemState.WARNING to Orange,
         SystemState.CRITICAL to ErrorText,
-        SystemState.DISABLED to Color.Transparent
+        SystemState.DISABLED to MainGrayColor
     )
     val stateGenerator= mutableMapOf(mapOf(Pair(Mode.AUTO,Command.START)) to R.drawable.start_test)
     val pointNetworkState= mutableMapOf(SystemState.CRITICAL to R.drawable.point_network_red,

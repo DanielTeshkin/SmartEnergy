@@ -127,20 +127,22 @@ fun FirstBlock(viewModel: MainViewModel, state: State<MainViewState>) {
                 Image(
                     imageVector = ImageVector.vectorResource(state.value.electricNetworkImage),
                     contentDescription = "image",
-                    modifier = Modifier.align(Alignment.Center)
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .offset(y = (-10).dp)
 
                 )
 
             }
-                Box(modifier = Modifier.align(Alignment.BottomCenter).offset(y = (-5).dp)) {
+                Box(modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .offset(y = (-5).dp)) {
 
-                        Row{
-                            Text(text =state.value.network_1.toString(), modifier = Modifier.offset(
-                                (-8).dp
-                            ),
-                                fontSize = 10.sp,textDecoration = TextDecoration.None,
+                        Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.width(80.dp)){
+                            Text(text =state.value.network_1.toString(),
+                                fontSize = 14.sp,textDecoration = TextDecoration.None,
                                 letterSpacing = 0.10000000149011612.sp,
-                                lineHeight = 10.sp,
+                                lineHeight = 14.sp,
                                 overflow = TextOverflow.Ellipsis, color = Color(
                                     red = 0f,
                                     green = 0f,
@@ -149,7 +151,7 @@ fun FirstBlock(viewModel: MainViewModel, state: State<MainViewState>) {
                                 ),
                                 fontWeight = FontWeight.Normal,
                                 fontStyle = FontStyle.Normal,)
-                            Text(text = state.value.network_2.toString(), fontSize = 10.sp,
+                            Text(text = state.value.network_2.toString(), fontSize = 14.sp,
                                 textDecoration = TextDecoration.None,
                                 letterSpacing = 0.10000000149011612.sp,
                                 lineHeight = 10.sp,
@@ -167,7 +169,8 @@ fun FirstBlock(viewModel: MainViewModel, state: State<MainViewState>) {
                                 textDecoration = TextDecoration.None,
                                 letterSpacing = 0.10000000149011612.sp,
                                 lineHeight = 10.sp,
-                                overflow = TextOverflow.Ellipsis,fontSize = 10.sp,modifier = Modifier.offset(9.dp),
+                                modifier =Modifier.alpha(1f),
+                                overflow = TextOverflow.Ellipsis,fontSize = 14.sp,
                                 color = Color(
                                     red = 0f,
                                     green = 0f,
@@ -203,6 +206,8 @@ fun FirstBlock(viewModel: MainViewModel, state: State<MainViewState>) {
                         .padding(top = 17.dp)
                         .offset(x = 114.dp)) {
                     TestPhasePoint(state)
+
+
                 }
                 Column(
                     Modifier
@@ -313,12 +318,57 @@ fun FirstBlock(viewModel: MainViewModel, state: State<MainViewState>) {
                     .width(118.dp)
 
             )
+            
 
-            Image(
-                imageVector = ImageVector.vectorResource(state.value.homeImage),
-                contentDescription = "",
-                Modifier.padding(top = 21.dp)
-            )
+                Image(
+                    imageVector = ImageVector.vectorResource(state.value.homeImage),
+                    contentDescription = "",
+                    Modifier.padding(top = 21.dp)
+                )
+            if(state.value.general!=0f) {
+                Text(
+                    text = state.value.general.toString(),
+                    textAlign = TextAlign.Start,
+                    fontSize = 20.sp,
+                    textDecoration = TextDecoration.None,
+                    letterSpacing = 0.10000000149011612.sp,
+                    lineHeight = 20.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .offset(y = ((-140).dp), x = 67.dp)
+
+
+                        //.height(19.dp)
+
+                        .alpha(1f),
+                    color = Color(red = 0f, green = 0f, blue = 0f, alpha = 0.46000000834465027f),
+                    fontWeight = FontWeight.Normal,
+                    fontStyle = FontStyle.Normal,
+                )
+                Text(
+                    text = "кВт",
+                    textAlign = TextAlign.Start,
+                    fontSize = 20.sp,
+                    textDecoration = TextDecoration.None,
+                    letterSpacing = 0.10000000149011612.sp,
+                    lineHeight = 20.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .offset(y = ((-145).dp), x = 65.dp)
+
+
+                        //.height(19.dp)
+
+                        .alpha(1f),
+                    color = Color(red = 0f, green = 0f, blue = 0f, alpha = 0.46000000834465027f),
+                    fontWeight = FontWeight.Normal,
+                    fontStyle = FontStyle.Normal,
+                )
+            }
+
+
+
+           
         }
 
     }
@@ -374,7 +424,42 @@ Box(
         Column {
             val image=state.value.commandButtonImage
             Box(Modifier.padding(start = 33.dp, end = 33.dp, top = 40.dp)) {
+                
                 GeneratorBlock(state)
+                if (viewModel.uiController.timeShow.collectAsState().value) {
+                    Row(Modifier.offset(y=40.dp,x=20.dp)) {
+                        Image(
+                            ImageVector.vectorResource(id = R.drawable.worker),
+                            contentDescription = ""
+                        )
+                        Text(
+                            text = "00:${viewModel.uiController.time.collectAsState().value}",
+                            textAlign = TextAlign.Center,
+                            fontSize = 24.sp,
+                            textDecoration = TextDecoration.None,
+                            letterSpacing = 0.sp,
+                            lineHeight = 32.sp,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+
+                                .width(64.dp)
+
+                                //.height(32.dp)
+
+                                .alpha(1f),
+                            color = Color(
+                                red = 0.10062497854232788f,
+                                green = 0.6708333492279053f,
+                                blue = 0.2788150906562805f,
+                                alpha = 1f
+                            ),
+                            fontWeight = FontWeight.Normal,
+                            fontStyle = FontStyle.Normal,
+                        )
+
+
+                    }
+                }
             }
             Box(modifier = Modifier.padding(start = 49.dp, end = 52.dp, top = 40.dp)) {
                 CommandAndNavigationPanel(navController,viewModel)

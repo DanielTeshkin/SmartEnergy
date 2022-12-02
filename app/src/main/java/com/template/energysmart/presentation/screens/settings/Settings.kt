@@ -418,7 +418,7 @@ fun SettingsScreen(navHostController: NavHostController= rememberNavController()
         Box(Modifier.padding(start = 80.dp, end = 80.dp, top = 20.dp, bottom = 50.dp)) {
             Button(onClick = { viewModel.exit()
             navHostController.navigate("start")
-            }, shape = RoundedCornerShape(30.dp), colors=ButtonDefaults.buttonColors(backgroundColor = Color.Red), modifier = Modifier
+            }, shape = RoundedCornerShape(30.dp), colors=ButtonDefaults.buttonColors(backgroundColor = MainGrayColor), modifier = Modifier
                 .width(200.dp)
                 .height(48.dp)) {
                 Text(text = "Выйти", textAlign = TextAlign.Center, color = Color.White)

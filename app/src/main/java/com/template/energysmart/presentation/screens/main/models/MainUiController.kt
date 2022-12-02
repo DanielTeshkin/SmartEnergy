@@ -1,6 +1,7 @@
 package com.template.energysmart.presentation.screens.main.models
 
 
+import android.os.CountDownTimer
 import android.util.Log
 import com.template.energysmart.R
 import com.template.energysmart.data.remote.api.model.request.Command
@@ -37,7 +38,9 @@ class MainUiController( private val interactor: MainInteractor) {
     val handModeImage= MutableStateFlow(R.drawable.hand_button_gray)
     val _alertDialog= MutableStateFlow(AlertNotificationState())
     val alertDialog=_alertDialog.asStateFlow()
-
+    private val _time= MutableStateFlow(0)
+    val time=_time.asStateFlow()
+    val timeShow= MutableStateFlow(false)
 
 
 
@@ -67,6 +70,16 @@ class MainUiController( private val interactor: MainInteractor) {
        val batteryImage=source.batteryImage[data.batteryState]
        val cold= data.temperatureState==TemperatureState.MINUS
 
+       if ((data.metric.time/1000)>0) {
+           _time.value = data.metric.time
+           timeShow.value=true
+           timerStart()
+
+       }
+
+
+
+
 
       val stateCommand = when(state.data.power_source){
           PowerSource.NETWORK -> actualMode.value != AUTO
@@ -78,19 +91,19 @@ class MainUiController( private val interactor: MainInteractor) {
            electricNetworkImage = source.network[data.generalState.city_network]?: R.drawable.line_electro,
            homeImage = source.home[data.generalState.energy_supply_home]?:R.drawable.ic_home_green,
            generatorImage = source.generator[data.generalState.generator_state]?:R.drawable.generator_off,
-           phase_vol_3 = data.metric.voltage_3.toString(),
-           phase_vol_2 = data.metric.voltage_2.toString(),
-           phase_vol_1 = data.metric.voltage_1.toString(),
+           phase_vol_3 = if(data.power_source==PowerSource.NETWORK) data.metric.voltage_3.toString() else data.metric.voltage_3.toInt().toString(),
+           phase_vol_2 = if(data.power_source==PowerSource.NETWORK) data.metric.voltage_2.toString() else data.metric.voltage_2.toInt().toString(),
+           phase_vol_1 = if(data.power_source==PowerSource.NETWORK) data.metric.voltage_1.toString() else data.metric.voltage_1.toInt().toString(),
            oilText = data.metric.time_to_change_oil,
            temperature = data.metric.temperature,
            stationText = data.metric.oil_level,
            commandButton = source.actualCommand[data.buttonState]?:R.drawable.ic_start_test,
            phaseFirstImage = phaseStateFirst?.first?:R.drawable.phase_generator_1_green,
-           phasePointFirst = phaseStateFirst?.second?:R.drawable.round_phase_1,
+           phasePointFirst = phaseStateFirst?.second?:R.drawable.round_phase_3_gray,
            phaseImageSecond = phaseStateSecond?.first?:R.drawable.phase_generator_1_green,
-           phasePointSecond = phaseStateSecond?.second?:R.drawable.round_phase_1,
+           phasePointSecond = phaseStateSecond?.second?:R.drawable.round_phase_2_gray,
            phaseImageThird = phaseStateThird?.first?:R.drawable.phase_generator_1_green,
-           phasePointThird = phaseStateThird?.second?:R.drawable.round_phase_1,
+           phasePointThird = phaseStateThird?.second?:R.drawable.round_phase_1_gray,
            commandButtonIsEnabled = stateCommand,
            autoButtonIsEnabled = stateAuto,
            handButtonIsEnabled = stateHandle,
@@ -107,7 +120,9 @@ class MainUiController( private val interactor: MainInteractor) {
            cold = cold,
            network_3 = data.metric.network_3,
            network_2 = data.metric.network_2,
-           network_1 = data.metric.network_1
+           network_1 = data.metric.network_1,
+           general = data.metric.general,
+           time = time.value
 
        )
 
@@ -182,7 +197,20 @@ class MainUiController( private val interactor: MainInteractor) {
     }
 
 
+private fun timerStart(){
+    val timer= object  : CountDownTimer(_time.value.toLong(),1000){
+        override fun onTick(time: Long) {
+            val seconds=time/6000
+            _time.value= seconds.toInt()
+        }
 
+        override fun onFinish() {
+            timeShow.value=false
+        }
+
+    }
+    timer.start()
+}
 
 
 }

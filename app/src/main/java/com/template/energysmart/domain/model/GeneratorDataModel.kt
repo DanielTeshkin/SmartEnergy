@@ -1,7 +1,5 @@
 package com.template.energysmart.domain.model
 
-import com.template.energysmart.data.remote.api.model.response.Parameter
-
 data class GeneratorDataModel(
     val metricModel: MetricModel,
     val settingsControlModel: SettingsModel,
@@ -35,17 +33,18 @@ data class PhasesStateModel(
 )
 
 data class GeneralMetric(
-    val time_to_change_oil:String="",
-    val time_work_timer:String="",
-    val temperature:Int=0,
-    val oil_level:String="",
-    val voltage_1:Double=0.0,
-    val voltage_2:Double=0.0,
-    val voltage_3:Double=0.0,
-    val network_1:Int=0,
-    val network_2:Int=0,
-    val network_3:Int=0
-
+    val time_to_change_oil: String = "",
+    val time_work_timer: String = "",
+    val temperature: Int = 0,
+    val oil_level: String = "",
+    val voltage_1: Double = 0.0,
+    val voltage_2: Double = 0.0,
+    val voltage_3: Double = 0.0,
+    val network_1: Int = 0,
+    val network_2: Int = 0,
+    val network_3: Int = 0,
+    val general: Float = 0f,
+    val time: Int= 0
 
 
 )

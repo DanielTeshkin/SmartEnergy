@@ -26,6 +26,8 @@ class DeviceViewModel @Inject constructor(private val interactor: DeviceInteract
     val error=_error.asStateFlow()
     private  val _navigation= MutableSharedFlow<Boolean>()
     val navigation=_navigation.asSharedFlow()
+   private val _loadScreen= MutableStateFlow(false)
+    val loadScreen=_loadScreen.asStateFlow()
     private val _state= MutableStateFlow(DeviceViewState.BindDevice())
     val state=_state.asStateFlow()
     init {
@@ -35,8 +37,15 @@ class DeviceViewModel @Inject constructor(private val interactor: DeviceInteract
             subscribe(data){
                 when(it){
                     is DeviceViewState.Loading -> _loading.value=it.loading
-                    is DeviceViewState.Error -> _error.value=it.throwable.message?:""
-                    is DeviceViewState.IsThereBindDevice ->_navigation.emit(it.exist)
+                    is DeviceViewState.Error ->{
+                        _error.value=it.throwable.message?:""
+                        _loading.value=false
+
+                    }
+                    is DeviceViewState.IsThereBindDevice ->{
+                        _navigation.emit(it.exist)
+                        _loadScreen.value=it.exist
+                    }
                     else -> {}
                 }
             }

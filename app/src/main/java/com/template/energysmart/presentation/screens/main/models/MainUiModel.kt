@@ -49,6 +49,8 @@ data class MainViewState(
     val network_1: Int =0,
     val network_2: Int =0,
     val network_3: Int =0,
+    val general:Float=0f,
+    val time:Int=0
 
     )
 

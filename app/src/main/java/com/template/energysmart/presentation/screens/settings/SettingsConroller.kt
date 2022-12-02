@@ -49,11 +49,11 @@ class SettingsController() {
             notifyEnabled.value=settingsModel.notifyEnabled
             generalOdometr.value=settingsModel.general_odometr
             odometrToChangeOil.value=settingsModel.odometr_before_change_oil
-            ecoMode.value= settingsModel.eco_control != null
+            ecoMode.value= settingsModel.eco_control.state
             timePause.value=settingsModel.eco_control?.time_pause?: 0
             timeWork.value=settingsModel.eco_control?.time_work?: 0
             timeStop.value=settingsModel.eco_control?.time_stop?: 0
-            voltageControl.value=data.settingsModel.voltage_control != null
+            voltageControl.value=data.settingsModel.voltage_control.state
             timeLowVoltage.value=data.settingsModel.voltage_control?.time_low ?: 0
             timeHighVoltage.value=data.settingsModel.voltage_control?.time_high?: 0
             voltageHigh.value=data.settingsModel.voltage_control?.voltage_high?: 0.0
@@ -66,7 +66,7 @@ class SettingsController() {
                 2->phaseSecondState.value=true
                 3->phaseThirdState.value=true
             }
-            preventiveMode.value=settingsModel.preventiveStart != null
+            preventiveMode.value=settingsModel.preventiveStart.state
             timeBeforeStartPreventive.value=data.settingsModel.preventiveStart?.time_before_start
                 ?: 0
             timeWorkPreventive.value=settingsModel.preventiveStart?.time_work ?: 0

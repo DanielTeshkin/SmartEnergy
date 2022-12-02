@@ -69,9 +69,11 @@ fun SliderParameter(
             val positionSlider = remember{ mutableStateOf(0f)}
             Log.i("sliderT",positionSlider.toString())
 
-            Box(Modifier.width(240 .dp)) {
+            Box(Modifier.width(250 .dp)) {
+                if(enabled)
                 ColorfulSlider(
                     value = sliderState(range,mean.toString()),
+                    enabled = true,
                     thumbRadius = 15.dp,
                     trackHeight = 20.dp,
                     onValueChange = { it ->
@@ -88,26 +90,48 @@ fun SliderParameter(
                     ),
                     valueRange = 0f..1f
                     )
-            }
+                else
+                    ColorfulSlider(
+                        value = sliderState(range,mean.toString()),
+                        enabled = false,
+                        thumbRadius = 15.dp,
+                        trackHeight = 20.dp,
+                        onValueChange = { it ->
+                            positionSlider.value=it
 
+                            viewModel.handleEvent(SettingsViewEvent.ValueChangerEvent(
+                                textFieldState(range,it),parameterValueType))
+                        },
+                        colors = MaterialSliderDefaults.materialColors(
+                            inactiveTrackColor = SliderBrushColor(color = DarkGrayColor),
+                            activeTrackColor = SliderBrushColor(Green),
+                            thumbColor = SliderBrushColor(Color.White),
+                            disabledActiveTrackColor = SliderBrushColor(color = DarkGrayColor)
+                        ),
+                        valueRange = 0f..1f
+                    )
+            }
+           val color=if (enabled)Color.Black else Color.Gray
             TextField(
                     value = mean.toString(),
                     onValueChange = {
-                        if(it.isNotEmpty()) {
+                        if(it.isNotEmpty()&&it.length<4) {
 
                             viewModel.handleEvent(SettingsViewEvent.ValueChangerEvent(it,parameterValueType))
                         }
                     },
                      modifier= Modifier
                          .offset(x = 26.dp, y = (-5).dp)
-                         .width(65.dp)
+                         .width(54.dp)
+                         .height(50.dp)
                          ,
-                    textStyle = TextStyle(
+                     enabled=enabled,
+                     textStyle = TextStyle(
                         textAlign = TextAlign.Center,
                         fontSize =12.sp,
                         textDecoration = TextDecoration.None,
                         lineHeight = 5.sp,
-                        color = Color.Black,
+                        color = color,
                         fontWeight = FontWeight.Bold,
                         fontStyle = FontStyle.Normal,
                     ),
@@ -469,7 +493,7 @@ fun TextRange(range: IntRange ,prefix:String){
         lineHeight = 32.sp,
         overflow = TextOverflow.Ellipsis,
         modifier = Modifier
-            .offset(x = (-5).dp, y = 5.dp)
+            .offset(x = (5).dp, y = 5.dp)
 
 
             //.height(32.dp)

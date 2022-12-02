@@ -3,9 +3,9 @@ package com.template.energysmart.domain.model
 import com.google.gson.annotations.SerializedName
 
 data class SettingsModel(
-    val voltage_control: VoltageControl?=null,
-    val eco_control:EcoControl?=null,
-    val preventiveStart:PreventiveMode?=null,
+    val voltage_control: VoltageControl=VoltageControl(),
+    val eco_control:EcoControl= EcoControl(),
+    val preventiveStart:PreventiveMode= PreventiveMode(),
     val phaseControl:PhaseControl= PhaseControl(0,true),
     val version:String="2.4",
     val balance:String="0",
@@ -19,19 +19,20 @@ data class SettingsModel(
     val notifyEnabled:Boolean=false
     )
 data class EcoControl(
+    val state: Boolean=false,
     val time_pause: Int =0,
     val time_work: Int =0,
     val time_stop:Int = 0
 )
 data class VoltageControl(
-
+    val state: Boolean=false,
     val voltage_low : Double=0.0,
     val time_low : Int=0,
     val voltage_high : Double=0.0,
     val time_high : Int=0,
 )
 data class PreventiveMode(
-
+    val state: Boolean=false,
 val time_work: Int=0,
 val time_before_start:Int = 0)
 

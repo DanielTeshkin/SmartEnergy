@@ -5,7 +5,6 @@ import com.template.energysmart.data.remote.api.model.response.Device
 import com.template.energysmart.data.remote.api.model.response.Metric
 import com.template.energysmart.data.remote.api.model.response.Parameter
 import com.template.energysmart.domain.model.*
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class Mapper @Inject constructor() {
@@ -23,7 +22,13 @@ class Mapper @Inject constructor() {
         val mode=if(model.mode=="AUTO") "AUTO" else "MANUAL"
 
         Log.i("q",timeToChangeOil.toString())
+        val generalVoltage=(model.pw1+model.pw2+model.pw3).toFloat()
+        Log.i("vol",generalVoltage.toFloat().toString())
 
+        val worker=if(model.bs.toInt()==0&&model.tesw==0&&model.ttb==0)model.tcsw else 0
+        val timeShow=worker
+
+        Log.i("ttb",(model.ttb/3600000).toString())
         val metrics= when(model.sw.toInt()) {
                1 -> GeneralMetric(
                    voltage_1 = model.pw1,
@@ -32,31 +37,43 @@ class Mapper @Inject constructor() {
                    temperature = model.temperature_air.toInt(),
                    oil_level = model.fuel.toString(),
                    time_to_change_oil =timeToChangeOil.toString(),
-                   time_work_timer = (model.ttb/3600000).toString(),
+                   time_work_timer = (model.odo/3600000).toInt().toString(),
                    network_1 = model.input1.toInt(),
                    network_2 = model.input2.toInt(),
-                   network_3 = model.input3.toInt()
+                   network_3 = model.input3.toInt(),
+                   general = generalVoltage,
+                   time=timeShow
 
                )
-               2 -> GeneralMetric(voltage_1 = model.gin,
-                   voltage_2
-                   = model.gin
+               2 -> GeneralMetric(
+                   time_to_change_oil = timeToChangeOil.toString(),
+                   time_work_timer = (model.odo/3600000).toInt().toString()
                    ,
-               voltage_3 = model.gin,
-               temperature = model.temperature_air.toInt(),
-               oil_level = model.fuel.toString(),
-               time_to_change_oil = timeToChangeOil.toString(),
-               time_work_timer = (model.ttb/3600000).toString(),
+                   temperature = model.temperature_air.toInt(),
+                   oil_level = model.fuel.toString(),
+                   voltage_1 = model.gin,
+                   voltage_2
+                   = model.gin,
+                   voltage_3 = model.gin,
                    network_1 = model.input1.toInt(),
                    network_2 = model.input2.toInt(),
-                   network_3 = model.input3.toInt())
-               else ->  GeneralMetric(voltage_1 =0.0, voltage_2 =0.0, voltage_3 =0.0, temperature = model.temperature_air.toInt(),
+                   network_3 = model.input3.toInt(),
+                   general = generalVoltage,
+                   time = timeShow
+               )
+               else ->  GeneralMetric(
+                   time_to_change_oil = timeToChangeOil.toString(),
+                   time_work_timer = (model.odo/3600000).toInt().toString(),
+                   temperature = model.temperature_air.toInt(),
                    oil_level = model.fuel.toString(),
-                   time_to_change_oil = model.toil.toString(),
-                   time_work_timer = model.ttb.toString(),
-            network_1 = 0,
-            network_2 = 0,
-            network_3 =0,
+                   voltage_1 =0.0,
+                   voltage_2 =0.0,
+                   voltage_3 =0.0,
+                   network_1 = model.input1.toInt(),
+                   network_2 = model.input2.toInt(),
+                   network_3 = model.input3.toInt(),
+                   general = generalVoltage,
+                   time = timeShow
                )
            }
         val generalState=systemStateController.getGeneralState()
@@ -103,29 +120,47 @@ class Mapper @Inject constructor() {
         voltage_control =
         when (parameter.voltage_control) {
             true -> VoltageControl(
+                state=true,
                 time_high = parameter.ext_voltage_time_phase_high,
                 time_low = parameter.ext_voltage_time_phase_low,
                 voltage_high = parameter.ext_voltage_phase_high,
                 voltage_low = parameter.ext_voltage_phase_low
             )
-            false -> null
+            false -> VoltageControl(
+                state=false,
+                time_high = parameter.ext_voltage_time_phase_high,
+                time_low = parameter.ext_voltage_time_phase_low,
+                voltage_high = parameter.ext_voltage_phase_high,
+                voltage_low = parameter.ext_voltage_phase_low
+            )
         },
         eco_control =
         when(parameter.ecoEnable) {
             true ->
                 EcoControl(
+                    state=true,
                     time_pause = parameter.pause_before_starting_the_generator,
                     time_stop = parameter.downtime,
                     time_work = parameter.eco_generator_run_time
                 )
-            false -> null
+            false ->  EcoControl(
+                state=false,
+                time_pause = parameter.pause_before_starting_the_generator,
+                time_stop = parameter.downtime,
+                time_work = parameter.eco_generator_run_time
+            )
         },
         preventiveStart = when(parameter.fuel) {
             true->  PreventiveMode(
+                state=true,
                 time_work = parameter.prof_generator_run_time,
                 time_before_start = parameter.start_time
             )
-            false -> null
+            false -> PreventiveMode(
+                state=false,
+                time_work = parameter.prof_generator_run_time,
+                time_before_start = parameter.start_time
+            )
         },
         phaseControl = when(parameter.phasescount){
             true-> PhaseControl(phase_count_control = parameter.phasecontrol,state=true)

@@ -41,8 +41,12 @@ class SettingsViewModel @Inject constructor( private val settingsInteractor: Set
     fun resetOdo(command: Command)=settingsInteractor.resetOdo(command)
     fun unbind(id:String)=settingsInteractor.unbind(id)
     fun removeUser(id: String){
+        val list= mutableListOf<User>()
+        list.addAll(_users.value)
         val user=_users.value.find { it.id==id }
-        _users.value.remove(user)
+        list.remove(user)
+        _users.value=list
+
     }
     fun clear()=onCleared()
 

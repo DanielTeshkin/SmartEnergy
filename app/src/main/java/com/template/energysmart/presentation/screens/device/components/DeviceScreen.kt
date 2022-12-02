@@ -58,7 +58,7 @@ fun DeviceScreen(navController: NavController,viewModel: DeviceViewModel= hiltVi
     val error by viewModel.error.collectAsState()
     if (loading) Loader()
     if (error.isNotEmpty()) Toast.makeText(LocalContext.current,error, Toast.LENGTH_LONG).show()
-    BindDeviceContent(viewModel)
+    if (!viewModel.loadScreen.collectAsState().value) BindDeviceContent(viewModel)
 
 }
 @Composable
@@ -167,15 +167,17 @@ fun BindDeviceContent(viewModel: DeviceViewModel) {
         Column(
             Modifier
                 .align(Alignment.Center)
-                .height(105.dp).offset(y= (-25).dp), verticalArrangement = Arrangement.SpaceBetween) {
+                .height(105.dp)
+                .offset(y = (-25).dp), verticalArrangement = Arrangement.SpaceBetween) {
 
 
 
             TextField(value = state.uid, onValueChange = { viewModel.reduceEvent(DeviceViewEvent.ChangeTextUIDEvent(it)) },
                 modifier = Modifier
                     .height(50.dp)
-                    .width(333.dp).onFocusEvent {
-                        focusManagerFirst.value=it.isFocused
+                    .width(333.dp)
+                    .onFocusEvent {
+                        focusManagerFirst.value = it.isFocused
                         coroutineScope.launch {
                             delay(100)
                             paddingButton = when (it.isFocused) {
@@ -234,8 +236,9 @@ fun BindDeviceContent(viewModel: DeviceViewModel) {
             TextField(value = state.password, onValueChange = {viewModel.reduceEvent(DeviceViewEvent.ChangeTextPasswordEvent(it))},
                 modifier = Modifier
                     .height(50.dp)
-                    .width(335.dp).onFocusEvent {
-                        focusManagerSecond.value=it.isFocused
+                    .width(335.dp)
+                    .onFocusEvent {
+                        focusManagerSecond.value = it.isFocused
                         coroutineScope.launch {
                             delay(100)
                             paddingButton = when (it.isFocused) {
@@ -295,7 +298,7 @@ fun BindDeviceContent(viewModel: DeviceViewModel) {
         Column(
             Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom =paddingButton)) {
+                .padding(bottom = paddingButton)) {
             val context= LocalContext.current
 
             Button(onClick = {
