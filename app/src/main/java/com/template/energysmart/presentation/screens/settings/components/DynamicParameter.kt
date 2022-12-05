@@ -121,14 +121,14 @@ fun SliderParameter(
                         }
                     },
                      modifier= Modifier
-                         .offset(x = 26.dp, y = (-5).dp)
-                         .width(54.dp)
+                         .offset(x = 22.dp, y = (-5).dp)
+                         .width(60.dp)
                          .height(50.dp)
                          ,
                      enabled=enabled,
                      textStyle = TextStyle(
                         textAlign = TextAlign.Center,
-                        fontSize =12.sp,
+                        fontSize =14.sp,
                         textDecoration = TextDecoration.None,
                         lineHeight = 5.sp,
                         color = color,

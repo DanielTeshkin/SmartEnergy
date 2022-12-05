@@ -78,7 +78,11 @@ class Mapper @Inject constructor() {
            }
         val generalState=systemStateController.getGeneralState()
         val buttonState=if(model.bs.toInt()==1) ButtonState.GRAY else checkButtonState(model, mode)
-        val oilState=if(timeToChangeOil>10)OilState.OK else if(timeToChangeOil in 0..10) OilState.WARNING else OilState.CRITICAL
+        val oilState= when {
+            timeToChangeOil>10 -> OilState.OK
+            timeToChangeOil in 0..10 -> OilState.WARNING
+            else -> OilState.CRITICAL
+        }
         val temperatureState=if(model.temperature_air.toInt()<0)TemperatureState.MINUS else TemperatureState.PLUS
         val batteryState= when {
             model.rssi>-65.0 -> BatteryState.FULL
@@ -169,9 +173,9 @@ class Mapper @Inject constructor() {
         balance = metrics.blns.toString(),
         phone =metrics.phone,
         version = metrics.fmw.toString(),
-        energy = metrics.ti.toString(),
-        level_oil = metrics.pow.toString(),
-        general_odometr = metrics.toil.toInt(),
+        energy = metrics.pow.toString(),
+        level_oil = metrics.fuel.toString(),
+        general_odometr = metrics.toil,
         odometr_before_change_oil =parameter.reset_oil_change.toInt(),
         temperatureAir = metrics.temperature_air.toString(),
         temperatureGenerator = metrics.temperature_generator.toString(),

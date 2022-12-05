@@ -1,4 +1,6 @@
 package com.template.energysmart.presentation.screens.settings
+import android.os.Build
+import android.telephony.PhoneNumberUtils
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -32,7 +36,9 @@ import androidx.navigation.compose.rememberNavController
 import com.template.energysmart.R
 import com.template.energysmart.data.remote.api.model.request.Command
 import com.template.energysmart.presentation.screens.settings.components.*
+import com.template.energysmart.presentation.theme.Green
 import com.template.energysmart.presentation.theme.MainGrayColor
+import java.util.*
 
 @Composable
 @Preview
@@ -106,18 +112,21 @@ fun SettingsScreen(navHostController: NavHostController= rememberNavController()
             TitleText(text = "Основные параметры")
         }
         drawStaticParameter(name = "Версия прошивки", mean = state.generalSettingsData.version)
-        drawStaticParameter(name = "Мой телефон", mean = state.generalSettingsData.phone)
-        drawStaticParameter(name = "Баланс", mean = state.generalSettingsData.balance)
-        if (state.preventiveMode) {
-            drawStaticParameter(
+        drawStaticParameter(name = "Мой телефон", mean =
+        PhoneNumberUtils.formatNumber(state.generalSettingsData.phone, Locale.getDefault().country)
+        )
+
+
+        drawStaticParameter(name = "Баланс", mean = state.generalSettingsData.balance+ " "+"₽")
+        drawStaticParameter(
                 name = "Профилактический \nзапуск",
                 mean = "Через ${state.time_before_start_preventive}  дней"
             )
-        }
-        drawStaticParameter(name = "Уровень топлива", mean = state.generalSettingsData.level_oil)
+
+        drawStaticParameter(name = "Уровень топлива", mean = state.generalSettingsData.level_oil+" "+"%")
         drawStaticParameter(
             name = "Заряд аккумулятора",
-            mean = state.generalSettingsData.energy + " " + "v"
+            mean = state.generalSettingsData.energy  + "v"
         )
         drawStaticParameter(
             name = "Температура генератора",
@@ -130,24 +139,44 @@ fun SettingsScreen(navHostController: NavHostController= rememberNavController()
         drawStaticParameter(name = "Сумарный одометр", mean = "${state.general_odometr} час")
         drawStaticParameter(name = "Одометр до замены \nмасла", mean = odometerState)
         Box(Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp)) {
-            IconButton(onClick = {
+            Button(onClick = {
                 viewModel.apply {
                     resetOdo(Command.OIL)
                     handleEvent(SettingsViewEvent.ResetOdometrToChangeOilEvent)
                 }
-            }) {
-                Image(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.reset_odometr),
-                    contentDescription = "",
+            }, shape = RoundedCornerShape(30.dp), colors=ButtonDefaults.buttonColors(backgroundColor = Green), modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .shadow(elevation = 8.dp, shape = RoundedCornerShape(30.dp), ambientColor = Color.Black, spotColor = Color.Black).border(width = 2.dp, color = Color(red = 0.10196078568696976f, green = 0.7215686440467834f, blue = 0.2980392277240753f, alpha = 1f), shape = RoundedCornerShape(30.dp) )) {
+
+
+                Text(
+                    text = "СБРОС ЗАМЕНЫ МАСЛА",
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    textDecoration = TextDecoration.None,
+                    letterSpacing = 1.5.sp,
+                    lineHeight = 24.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+
+                        //.height(24.dp)
+
+                        .alpha(0.699999988079071f),
+                    color = Color(red = 0.11372549086809158f, green = 0.12156862765550613f, blue = 0.16078431904315948f, alpha = 1f),
+                    fontWeight = FontWeight.Medium,
+                    fontStyle = FontStyle.Normal,
                 )
+
             }
+
         }
 
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 30.dp),
+                .padding(top = 20.dp),
             contentAlignment = Alignment.Center
         ) {
             TitleText(text = "Настройки системы")
@@ -323,22 +352,42 @@ fun SettingsScreen(navHostController: NavHostController= rememberNavController()
 
         }
         Box(Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp)) {
-            IconButton(onClick = {
+            Button(onClick = {
                 viewModel.apply {
                     handleEvent(SettingsViewEvent.ResetOdometrEvent)
                     resetOdo(Command.COMMON)
                 }
-            }) {
-                Image(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.odometr_ic),
-                    contentDescription = "",
+            }, shape = RoundedCornerShape(30.dp), colors=ButtonDefaults.buttonColors(backgroundColor = Green), modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp) .shadow(elevation = 8.dp, shape = RoundedCornerShape(30.dp), ambientColor = Color.Black, spotColor = Color.Black).border(width = 2.dp, color = Color(red = 0.10196078568696976f, green = 0.7215686440467834f, blue = 0.2980392277240753f, alpha = 1f), shape = RoundedCornerShape(30.dp) )) {
+
+
+                Text(
+                    text = "СБРОС ОБЩЕГО ОДОМЕТРА",
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    textDecoration = TextDecoration.None,
+                    letterSpacing = 1.5.sp,
+                    lineHeight = 24.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+
+                        //.height(24.dp)
+
+                        .alpha(0.699999988079071f),
+                    color = Color(red = 0.11372549086809158f, green = 0.12156862765550613f, blue = 0.16078431904315948f, alpha = 1f),
+                    fontWeight = FontWeight.Medium,
+                    fontStyle = FontStyle.Normal,
                 )
+
             }
         }
+
+
         Box(
             Modifier
                 .fillMaxWidth()
-                .padding(top = 30.dp)
+                .padding(top = 20.dp)
                 .fillMaxWidth()
         ) {
             Image(
@@ -408,20 +457,38 @@ fun SettingsScreen(navHostController: NavHostController= rememberNavController()
 
 
         Box(Modifier.padding(start = 80.dp, end = 80.dp, top = 20.dp)) {
-            IconButton(onClick = { viewModel.update() }) {
-                Image(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_group_142),
-                    contentDescription = "",
+            Button(onClick = { viewModel.update() }, shape = RoundedCornerShape(30.dp), colors=ButtonDefaults.buttonColors(backgroundColor = Green), modifier = Modifier
+                .width(200.dp)
+                .height(48.dp)
+                .shadow(elevation = 8.dp, shape = RoundedCornerShape(30.dp), ambientColor = Color.Black, spotColor = Color.Black)
+
+                .border(width = 2.dp, color = Color(red = 0.10196078568696976f, green = 0.7215686440467834f, blue = 0.2980392277240753f, alpha = 1f), shape = RoundedCornerShape(30.dp) )) {
+                Text(
+                    text = "СОХРАНИТЬ",
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    textDecoration = TextDecoration.None,
+                    letterSpacing = 1.5.sp,
+                    lineHeight = 24.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+
+                        //.height(24.dp)
+
+                        .alpha(0.699999988079071f),
+                    color = Color(red = 0.11372549086809158f, green = 0.12156862765550613f, blue = 0.16078431904315948f, alpha = 1f),
+                    fontWeight = FontWeight.Medium,
+                    fontStyle = FontStyle.Normal,
                 )
             }
         }
-        Box(Modifier.padding(start = 80.dp, end = 80.dp, top = 20.dp, bottom = 50.dp)) {
+        Box(Modifier.padding(start = 80.dp, end = 80.dp, top = 10.dp, bottom = 50.dp)) {
             Button(onClick = { viewModel.exit()
             navHostController.navigate("start")
             }, shape = RoundedCornerShape(30.dp), colors=ButtonDefaults.buttonColors(backgroundColor = MainGrayColor), modifier = Modifier
                 .width(200.dp)
                 .height(48.dp)) {
-                Text(text = "Выйти", textAlign = TextAlign.Center, color = Color.White)
+                Text(text = "Выйти", textAlign = TextAlign.Center, color = Color.Black)
             }
         }
 
